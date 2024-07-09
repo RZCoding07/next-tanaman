@@ -37,6 +37,7 @@ export default function Admin({ children }: { children: React.ReactNode }) {
               secondary={getActiveNavbar(routes, pathname)}
             />
             <div className="mx-auto min-h-screen p-2 !pt-[10px] md:p-2">
+              {/* this is where the page is added */}
               {children}
             </div>
             <div className="p-3">
