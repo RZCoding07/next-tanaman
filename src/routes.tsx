@@ -15,9 +15,11 @@ import {
   FaUsers
 } from 'react-icons/fa6';
 
+import { FaTreeCity } from "react-icons/fa6";
 
 import { PiTreePalmFill } from "react-icons/pi";
 
+import { BsFileEarmarkBarGraph } from "react-icons/bs";
 
 const routes = [
   {
@@ -33,16 +35,22 @@ const routes = [
     path: 'users',
   },
   {
+    name: 'Data Regional',
+    layout: '/admin',
+    icon: <FaTreeCity className="h-6 w-6" />,
+    path: 'regional',
+  },
+  {
     name: 'Data Kebun',
     layout: '/admin',
     icon: <PiTreePalmFill className="h-6 w-6" />,
     path: 'kebun',
   },
   {
-    name: 'Data Karyawan',
+    name: 'Data Kuadran',
     layout: '/admin',
-    path: 'karyawan',
-    icon: <MdPerson className="h-6 w-6" />,
+    path: 'kuadran',
+    icon: <BsFileEarmarkBarGraph className="h-6 w-6" />,
   }
 
 ];
