@@ -1,7 +1,7 @@
 "use client";
 import cookie from "js-cookie";
 import { Tokens } from "types/token";
-import { KebunType } from "types/kebun";  // Update the import for the new type
+import { RegionalType } from "types/regional";  // Update the import for the new type
 import Head from "next/head";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ import { isWindowAvailable } from "utils/navigation";
 const KebunList = () => {
   if (isWindowAvailable()) document.title = "Regional List";
 
-  const [dataAllKebun, setDataAllKebun] = useState<KebunType[]>([]);
+  const [dataAllKebun, setDataAllKebun] = useState<RegionalType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,7 +28,7 @@ const KebunList = () => {
     const loginData = cookie.get("token");
     const tokenData: Tokens = JSON.parse(loginData || "{}");
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/kebun`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/regional`, {
       method: "GET",
       headers: {
         accept: "application/json",
@@ -54,8 +54,8 @@ const KebunList = () => {
     if (searchInput === "") {
       return kebun;
     } else if (
-      kebun.kode_kebun.toLowerCase().includes(searchInput.toLowerCase()) ||
-      kebun.nama_kebun.toLowerCase().includes(searchInput.toLowerCase())
+      kebun.tipe_regional.toLowerCase().includes(searchInput.toLowerCase()) ||
+      kebun.nama_regional.toLowerCase().includes(searchInput.toLowerCase())
     ) {
       return kebun;
     }
@@ -92,8 +92,7 @@ const KebunList = () => {
             />
           </div>
 
-          <CreateButton buttonName="Create Kebun +" pathUrl="/admin/kebun/create" />
-          <UploadButton buttonName="Upload Kebun" pathUrl="/admin/kebun/upload" />
+          <CreateButton buttonName="Create Regional +" pathUrl="/admin/regional/create" />
         </div>
 
         {/* table */}
@@ -106,10 +105,10 @@ const KebunList = () => {
                     No
                   </th>
                   <th scope="col" className="px-6 py-8">
-                    
+                    Tipe Regional
                   </th>
                   <th scope="col" className="px-6 py-8">
-                    Nama Kebun
+                    Nama Regional
                   </th>
                   <th scope="col" className="px-6 py-8 text-center">
                     Aksi
@@ -138,19 +137,19 @@ const KebunList = () => {
                             <td className="px-6 py-7">
                               {indexOfFirstItem + 1 + index}
                             </td>
-                            <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">{kebun.kode_kebun}</td>
-                            <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">{kebun.nama_kebun}</td>
+                            <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">{kebun.tipe_regional}</td>
+                            <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">{kebun.nama_regional}</td>
                             <td className="px-6 py-7 text-gray-900 font-medium">
                               <div className="flex items-center justify-between gap-1">
                                 <Link
-                                  href={`/admin/kebun/view/${kebun.id}`}
+                                  href={`/admin/regional/view/${kebun.id}`}
                                   legacyBehavior>
                                   <a className="p-2 bg-green-600 rounded-lg cursor-pointer">
                                     <TbReportSearch className="text-lg text-white cursor-pointer" />
                                   </a>
                                 </Link>
                                 <Link
-                                  href={`/admin/kebun/edit/${kebun.id}`}
+                                  href={`/admin/regional/edit/${kebun.id}`}
                                   legacyBehavior>
                                   <a className="p-2 bg-yellow-400 rounded-lg cursor-pointer">
                                     <BiEdit className="text-lg text-white cursor-pointer" />
@@ -158,7 +157,7 @@ const KebunList = () => {
                                 </Link>
 
                                 <DeleteButton
-                                  endPointUrl={`/kebun/${kebun.id}`}
+                                  endPointUrl={`/regional/${kebun.id}`}
                                   getDataAgain={getAllDataKebun}
                                 />
                               </div>
