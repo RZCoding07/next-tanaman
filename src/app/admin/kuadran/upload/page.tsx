@@ -197,7 +197,7 @@ const UploadIplFile: React.FC = (): JSX.Element => {
         const tokenData = JSON.parse(loginData || "{}");
 
         try {
-            const chunkSize = 1500;
+            const chunkSize = 1000;
             for (let i = 0; i < Math.ceil(mappedData.length / chunkSize); i++) {
                 const res = await fetch(`${apiUrl}/kuadran/upload`, {
                     method: "POST",
