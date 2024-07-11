@@ -197,7 +197,7 @@ const UploadIplFile: React.FC = (): JSX.Element => {
         const tokenData = JSON.parse(loginData || "{}");
 
         try {
-            const chunkSize = 100;
+            const chunkSize = 1000;
             for (let i = 0; i < Math.ceil(mappedData.length / chunkSize); i++) {
                 const res = await fetch(`${apiUrl}/kuadran/upload`, {
                     method: "POST",
@@ -222,7 +222,7 @@ const UploadIplFile: React.FC = (): JSX.Element => {
                     if (i === Math.ceil(mappedData.length / chunkSize) - 1) {
                         setIsUploadingDone(true);
                         if (isUploadingDone) {
-                            toast.success("Upload data berhasil! batch " + (i + 1));
+                            toast.success("Upload data berhasil!");
                             setTimeout(() => {
                                 router.push("/admin/kebun");
                             }, 2000);
