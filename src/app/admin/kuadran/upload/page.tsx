@@ -190,64 +190,101 @@ const UploadIplFile: React.FC = (): JSX.Element => {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    const handleUploadKuadran = async (mappedData, apiUrl, setIsLoadingUpload, setProgressValue, setIsUploadingDone) => {
+    const handleUploadKuadran = async (
+        mappedData,
+        apiUrl,
+        setIsLoadingUpload,
+        setProgressValue,
+        setIsUploadingDone,
+        selectedMonth,
+        selectedYear
+      ) => {
         setIsLoadingUpload(true);
-
         const loginData = cookie.get("token");
         const tokenData = JSON.parse(loginData || "{}");
-
-        try {
-            const chunkSize = 1000;
-            for (let i = 0; i < Math.ceil(mappedData.length / chunkSize); i++) {
-                const res = await fetch(`${apiUrl}/kuadran/upload`, {
-                    method: "POST",
-                    headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${tokenData.payload.access_token}`,
-                    },
-                    body: JSON.stringify({
-                        mappedData: mappedData.slice(i * chunkSize, (i + 1) * chunkSize),
-                    }),
-                });
-
-                const data = await res.json();
-
-                if (data.status_code === 200) {
-                    toast.success(data.message);
-
-                    const progressPercent = ((i + 1) * 100) / Math.ceil(mappedData.length / chunkSize);
-                    setProgressValue(progressPercent);
-
-                    if (i === Math.ceil(mappedData.length / chunkSize) - 1) {
-                        setIsUploadingDone(true);
-                        if (isUploadingDone) {
-                            toast.success("Upload data berhasil!");
-                            setTimeout(() => {
-                                router.push("/admin/kebun");
-                            }, 2000);
-                        }
-                    }
-                } else {
-                    toast.error("Oops gagal, periksa kembali data!");
-                    setIsLoadingUpload(false);
-                    return;
-                }
-            }
-
-            setIsLoadingUpload(false);
-            setProgressValue(100);
-            setTimeout(() => {
-                setIsUploadingDone(false);
-                setProgressValue(2);
-            }, 3000);
-        } catch (error) {
-            console.error(error);
-            setIsLoadingUpload(false);
-            toast.error("Oops terjadi kesalahan, periksa koneksi dan coba lagi!");
+        const chunkSize = Math.ceil(mappedData.length / 10);
+        const uploadPromises = [];
+      
+        for (let i = 0; i < 10; i++) {
+          const chunk = mappedData.slice(i * chunkSize, (i + 1) * chunkSize);
+          uploadPromises.push(
+            fetch(`${apiUrl}/kuadran/upload`, {
+              method: "POST",
+              headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${tokenData.payload.access_token}`,
+              },
+              body: JSON.stringify({ mappedData: chunk }),
+            }).then((res) => res.json())
+          );
         }
-    };
+      
+        try {
+          const results = await Promise.all(uploadPromises);
+          let allSuccessful = true;
+      
+        //   results.forEach((data, index) => {
+        //     if (data.status_code === 200) {
+        //       toast.success(`Batch ${index + 1} uploaded successfully!`);
+        //     } else {
+        //       allSuccessful = false;
+        //       toast.error(`Batch ${index + 1} failed to upload!`);
+        //     }
+        //   });
+      
+          const totalBatches = 10;
+          for (let i = 0; i < totalBatches; i++) {
+            const progressPercent = ((i + 1) * 100) / totalBatches;
+            setProgressValue(progressPercent);
+            await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate async update for progress bar
+          }
+      
+          if (allSuccessful) {
+            toast.success("All data uploaded successfully!");
+            setIsUploadingDone(true);
+            setTimeout(() => {
+              router.push("/admin/kuadran");
+            }, 2000);
+      
+            // Create report
+            const reportRes = await fetch(`${apiUrl}/report`, {
+              method: "POST",
+              headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${tokenData.payload.access_token}`,
+              },
+              body: JSON.stringify({
+                bulan: selectedMonth.value,
+                tahun: selectedYear.value,
+              }),
+            });
+      
+            const reportData = await reportRes.json();
+            if (reportData.status_code === 200) {
+              toast.success(`Laporan bulan ${selectedMonth.label} tahun ${selectedYear.value} berhasil dibuat!`);
+            } else {
+              toast.error("Gagal membuat laporan!");
+            }
+          } else {
+            toast.error("Some chunks failed to upload!");
+          }
+      
+          setIsLoadingUpload(false);
+          setTimeout(() => {
+            setIsUploadingDone(false);
+            setProgressValue(0);
+          }, 3000);
+        } catch (error) {
+          console.error(error);
+          setIsLoadingUpload(false);
+          toast.error("Oops terjadi kesalahan, periksa koneksi dan coba lagi!");
+        }
+      };
+      
 
+      
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleButtonClick = () => {
@@ -351,7 +388,7 @@ const UploadIplFile: React.FC = (): JSX.Element => {
 
                 {!isLoadingUpload ? (
                     <button
-                        onClick={() => handleUploadKuadran(mappedData, apiUrl, setIsLoadingUpload, setProgressValue, setIsUploadingDone)}
+                        onClick={() => handleUploadKuadran(mappedData, apiUrl, setIsLoadingUpload, setProgressValue, setIsUploadingDone, selectedMonth, selectedYear)}
                         disabled={
                             !fileName ||
                             isLoadingUpload ||
