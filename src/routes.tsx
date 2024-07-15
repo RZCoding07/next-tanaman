@@ -21,6 +21,9 @@ import { PiTreePalmFill } from "react-icons/pi";
 
 import { BsFileEarmarkBarGraph } from "react-icons/bs";
 
+// why 
+import { TbAdjustmentsQuestion } from "react-icons/tb";
+
 const routes = [
   {
     name: 'Dashboard',
@@ -51,7 +54,13 @@ const routes = [
     layout: '/admin',
     path: 'kuadran',
     icon: <BsFileEarmarkBarGraph className="h-6 w-6" />,
-  }
+  },
+  {
+    name: 'Data Why',
+    layout: '/admin',
+    path: 'why',
+    icon: <TbAdjustmentsQuestion className="h-6 w-6" />,
+  },
 
 ];
 export default routes;

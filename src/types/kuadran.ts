@@ -11,7 +11,6 @@ export interface KuadranType {
     jlh_pokok: string | null;
     pkk_ha: string | null;
     rpc: string | null;
-    kebun_: string | null;
     r: string | null;
     warna: string | null;
     bulan: string | null;

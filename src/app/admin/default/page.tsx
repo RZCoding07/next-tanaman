@@ -13,6 +13,10 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { NumericFormat } from "react-number-format";
 import { isWindowAvailable } from "utils/navigation";
+import PieChartDashboard from 'components/charts/PieChartDashboard';
+import cookie from "js-cookie";
+import { Tokens } from "types/token";
+
 
 const Dashboard = () => {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -90,35 +94,97 @@ const Dashboard = () => {
   };
 
   type Data = {
-    keterangan: {
+    report: {
       value: string;
       label: string;
-    },
-    regional: {
-      value: string;
-      label: string;
-    },
-    kebun: {
-      value: string;
-      label: string;
-    },
-    tahun: {
-      value: string;
-      label: string;
-    },
-    bulan: {
-      value: string;
-      label: string;
-    };
+    }
   };
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  let keteranganOptions = [
-    { value: 'master-data', label: 'Master Data' },
-    { value: 'lm', label: 'LM' },
-  ];
+  // GET TAHUN DATA
+  const [dataReport, setDataReport] = React.useState<any>([]);
+  const [dataAllReport, setAllDataReport] = React.useState<any>([]);
+  const [bulan, setBulan] = React.useState<any>(1);
+  const [tahun, setTahun] = React.useState<any>(2021);
+  const [emas, setEmas] = React.useState<any>(0);
+  const [hitam, setHitam] = React.useState<any>(0);
+  const [hijau, setHijau] = React.useState<any>(0);
+  const [kuning, setKuning] = React.useState<any>(0);
+  const [merah, setMerah] = React.useState<any>(0);
+  const [tua, setTua] = React.useState<any>(0);
+  const [muda, setMuda] = React.useState<any>(0);
+  const [remaja, setRemaja] = React.useState<any>(0);
+  const [renta, setRenta] = React.useState<any>(0);
+  const [dewasa, setDewasa] = React.useState<any>(0);
 
+
+
+
+
+  // Mengambil data kebun dari API
+  const getAllReport = async () => {
+    const loginData = cookie.get("token");
+    const tokenData: Tokens = JSON.parse(loginData || "{}");
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/report`, {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tokenData.payload.access_token}`,
+      },
+    });
+    const data = await res.json();
+    if (data.status_code === 200) {
+      // console.log(data.data);
+      // set mappedData to value label
+
+      let bulanOpt = [
+        { value: '1', label: 'Januari' },
+        { value: '2', label: 'Februari' },
+        { value: '3', label: 'Maret' },
+        { value: '4', label: 'April' },
+        { value: '5', label: 'Mei' },
+        { value: '6', label: 'Juni' },
+        { value: '7', label: 'Juli' },
+        { value: '8', label: 'Agustus' },
+        { value: '9', label: 'September' },
+        { value: '10', label: 'Oktober' },
+        { value: '11', label: 'November' },
+        { value: '12', label: 'Desember' },
+      ];
+      const mappedData = data.payload.map((item: any) => {
+        return {
+          value: item.id,
+          label: bulanOpt[item.bulan - 1].label + " " + item.tahun
+        };
+      });
+
+      setDataReport(mappedData);
+
+      setAllDataReport(data.payload);
+
+      setEmas(data.payload[0].emas);
+      setHitam(data.payload[0].hitam);
+      setHijau(data.payload[0].hijau);
+      setKuning(data.payload[0].kuning);
+      setMerah(data.payload[0].merah);
+      setTua(data.payload[0].tua);
+      setMuda(data.payload[0].muda);
+      setRemaja(data.payload[0].remaja);
+      setRenta(data.payload[0].renta);
+      setDewasa(data.payload[0].dewasa);
+      setBulan(data.payload[0].bulan);
+      setTahun(data.payload[0].tahun);
+
+      console.log(data.payload);
+
+    } else {
+      // handle error
+      console.error("Failed to fetch data");
+    }
+  };
 
   const {
     register,
@@ -130,65 +196,91 @@ const Dashboard = () => {
   } = useForm<Data>({
     defaultValues: {
 
-
     },
   });
 
   const instanceId = useId();
 
-  const { field: keteranganField } = useController({
-    name: "keterangan",
-    control,
-  });
-
-  const handleIsKeteranganSelectChange = (
-    value: { value: string; label: string; } | null
-  ) => {
-    if (value) {
-      keteranganField.onChange(value);
-      // setValue("keterangan", value); // Set nilai kebun ke yang dipilih oleh pengguna
-      console.log(value);
-    }
-  };
-
-  const handleIsRegionalSelectChange = (
-    value: { value: string; label: string; } | null
-  ) => {
-    if (value) {
-      setValue("regional", value); // Set nilai kebun ke yang dipilih oleh pengguna
-      console.log(value);
-    }
-  };
-
-  const handleIsKebunSelectChange = (
-    value: { value: string; label: string; } | null
-  ) => {
-    if (value) {
-      setValue("kebun", value); // Set nilai kebun ke yang dipilih oleh pengguna
-      console.log(value);
-    }
-  };
-
-  const handleIsTahunSelectChange = (
-    value: { value: string; label: string; } | null
-  ) => {
-    if (value) {
-      setValue("tahun", value); // Set nilai kebun ke yang dipilih oleh pengguna
-      console.log(value);
-    }
-  };
+  useEffect(() => {
+    getAllReport();
+  }, []);
 
 
   return (
     <>
       <div className="w-full min-h-screen">
-        <div className="flex items-center justify-end gap-2 mt-10">
-          <div className="relative w-full mr-4">
+        <div className="flex ustify-end gap-2 mt-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4">
+            <Select
+              instanceId={instanceId}
+              inputId="report"
+              name="report"
+              options={dataReport}
+              styles={customStyles}
+              placeholder="Pilih Tahun"
+              isSearchable={true}
+              defaultValue={dataReport[0]}
+              isClearable={true}
+              {...register('report')}
+            />
           </div>
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4">
+          <div className="bg-black text-white p-4 rounded-lg shadow-md" style={{ backgroundColor: 'black', color: 'white' }}>
+            <h2 className="text-lg font-bold">HITAM</h2>
+            <p className="text-2xl">{hitam}</p>
+
+          </div>
+          <div className="bg-yellow-500 text-black p-4 rounded-lg shadow-md">
+            <h2 className="text-lg font-bold">EMAS</h2>
+            <p className="text-2xl">{emas}</p>
+          </div>
+          <div className="bg-green-500 text-white p-4 rounded-lg shadow-md">       
+            <h2 className="text-lg font-bold">HIJAU</h2>
+            <p className="text-2xl">
+              {hijau}
+            </p></div>
+          <div className="bg-yellow-300 text-black p-4 rounded-lg shadow-md">       
+            <h2 className="text-lg font-bold">KUNING</h2>
+            <p className="text-2xl">{kuning}</p></div>
+          <div className="bg-red-700 text-white p-4 rounded-lg shadow-md">       
+            <h2 className="text-lg font-bold">MERAH</h2>
+            <p className="text-2xl">{merah}</p></div>
+        </div>
+        <div className="mt-3 grid lg:grid-cols-2 gap-5 sm:grid sm:grid-cols-12">
+          <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Renta</h3>
+            <div className="flex">
+              <PieChartDashboard />
+            </div>
+          </div>
+          <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Tua</h3>
+            <div className="flex">
+            <PieChartDashboard />
+
+            </div>
+          </div>
+          <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Dewasa</h3>
+            <div className="flex">
+            <PieChartDashboard />
+
+            </div>
+          </div>
+          <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Muda</h3>
+            <div className="flex">
+            <PieChartDashboard />
+
+            </div>
+          </div>
+
+
         </div>
 
 
+      </div>
     </>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { BiEdit, BiTrash } from "react-icons/bi";
-import { TbReportSearch } from "react-icons/tb";
 import Link from "next/link";
 import cookie from "js-cookie";
 import PageLoading from "components/loading/LoadingSkeleton";
@@ -10,11 +9,14 @@ import UploadButton from "components/buttons/UploadButton";
 import { isWindowAvailable } from "utils/navigation";
 import { Tokens } from "types/token";
 import { KuadranType } from "types/kuadran";
+import { ReportType } from "types/report";
+import axios from "axios";
 
 const KuadranList = (props: any) => {
   if (isWindowAvailable()) document.title = "Kuadran List";
 
-  const [dataAllKuadran, setDataAllKuadran] = useState<KuadranType[]>([]);
+  const [dataAllReport, setDataAllReport] = useState<ReportType[]>([]);
+  // const [dataAllKuadran, setDataAllKuadran] = useState<KuadranType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchInput, setSearchInput] = useState<string>("");
   const [cursor, setCursor] = useState<number | null>(null);
@@ -24,81 +26,33 @@ const KuadranList = (props: any) => {
   const [isEndOfData, setIsEndOfData] = useState(false);
 
   useEffect(() => {
-    getAllDataKuadran();
-  }, [cursor, limitPerPage]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
-      setIsFetching(true);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    if (!isFetching || isEndOfData) return;
-
-    const fetchData = async () => {
-      setIsFetching(true);
-      const loginData = cookie.get("token");
-      const tokenData: Tokens = JSON.parse(loginData || "{}");
-
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/kuadran?limit=${limitPerPage}&cursor=${nextCursor}`,
-          {
-            method: "GET",
-            headers: {
-              accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${tokenData.payload.access_token}`,
-            },
-          }
-        );
-        const data = await res.json();
-        if (res.ok) {
-          setDataAllKuadran([...dataAllKuadran, ...data.kuadrans]);
-          setNextCursor(data.nextCursor);
-          setIsEndOfData(data.kuadrans.length === 0);
-        } else {
-          console.error("Failed to fetch data:", data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsFetching(false);
-      }
-    };
-
     fetchData();
-  }, [isFetching]);
+  }, [cursor, searchInput]);
 
-  const getAllDataKuadran = async () => {
+
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const fetchData = async () => {
     setIsLoading(true);
-    const loginData = cookie.get("token");
-    const tokenData: Tokens = JSON.parse(loginData || "{}");
-
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/kuadran?limit=${limitPerPage}&cursor=${cursor}`,
-        {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${tokenData.payload.access_token}`,
-          },
+      const loginData = cookie.get("token");
+      const tokenData = JSON.parse(loginData || "{}");
+      const response = await axios.get(`${apiUrl}/report`, {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${tokenData.payload.access_token}`,
+        },
+        params: {
+          limit: limitPerPage,
+          cursor: cursor,
+          search: searchInput,
         }
-      );
-      const data = await res.json();
-      if (res.ok) {
-        setDataAllKuadran(data.kuadrans);
-        setNextCursor(data.nextCursor);
-      } else {
-        console.error("Failed to fetch data:", data.message);
-      }
+      });
+      const { payload, nextCursor, hasNextPage } = response.data;
+
+      setDataAllReport(cursor ? [...dataAllReport, ...payload] : payload);
+      setNextCursor(hasNextPage ? nextCursor : null);
+      setIsEndOfData(!hasNextPage);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -108,16 +62,16 @@ const KuadranList = (props: any) => {
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(event.target.value);
+    setCursor(null);
   };
 
-  const filteredData = dataAllKuadran.filter(
-    (kuadran) =>
-      kuadran.kebun.toLowerCase().includes(searchInput.toLowerCase()) ||
-      kuadran.afd.toLowerCase().includes(searchInput.toLowerCase())
-  );
-
-  const loadMore = () => {
+  const handleNextPage = () => {
     setCursor(nextCursor);
+  };
+
+  const handlePreviousPage = () => {
+    // Logic to handle previous page
+    // For keyset pagination, you might need to keep a stack of previous cursors
   };
 
   return (
@@ -153,6 +107,7 @@ const KuadranList = (props: any) => {
 
         {/* Table */}
         <div className="mt-10">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-5"> Data Report </h2>
           <div className="relative overflow-x-auto overflow-y-hidden border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px]">
             <table className="w-full text-sm text-left text-gray-500">
               <thead className="text-gray-700 bg-gray-50 dark:bg-navy-800">
@@ -161,133 +116,64 @@ const KuadranList = (props: any) => {
                     No
                   </th>
                   <th scope="col" className="px-6 py-8">
-                    Kondisi
+                    Bulan
                   </th>
                   <th scope="col" className="px-6 py-8">
-                    Status Umur
+                    Tahun
                   </th>
                   <th scope="col" className="px-6 py-8">
-                    Kebun
-                  </th>
-                  <th scope="col" className="px-6 py-8">
-                    KKL Kebun
-                  </th>
-                  <th scope="col" className="px-6 py-8">
-                    Afd
-                  </th>
-                  <th scope="col" className="px-6 py-8">
-                    Tahun Tanam
+                    Diupload Tanggal
                   </th>
                   <th scope="col" className="px-6 py-8 text-center">
                     Aksi
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200 dark:divide-navy-700 text-navy-900 dark:text-white">
                 {isLoading ? (
-                  <tr className="border-b border-[#9FA284] border-opacity-20 hover:bg-gray-50">
-                    <td colSpan={8} className="px-5 p-7">
+                  <tr>
+                    <td colSpan={5} className="text-center py-8">
                       <PageLoading />
                     </td>
                   </tr>
                 ) : (
-                  <>
-                    {filteredData.length === 0 ? (
-                      <tr className="border-b border-[#9FA284] border-opacity-20 font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:bg-navy-900">
-                        <td colSpan={8} className="text-center py-7">
-                          Tidak ada data
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredData.map((kuadran, index) => (
-                        <tr
-                          key={index}
-                          className="border-b py-7 bg-white dark:bg-navy-900 border-opacity-20 hover:bg-gray-50 dark:border-navy-700"
-                        >
-                          <td className="px-6 py-7">{kuadran.id}</td>
-                          <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">
-                            {kuadran.kondisi}
-                          </td>
-                          <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">
-                            {kuadran.status_umur}
-                          </td>
-                          <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">
-                            {kuadran.kebun}
-                          </td>
-                          <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">
-                            {kuadran.kkl_kebun}
-                          </td>
-                          <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">
-                            {kuadran.afd}
-                          </td>
-                          <td className="px-6 py-7 text-gray-900 font-medium dark:text-white">
-                            {kuadran.tahun_tanam}
-                          </td>
-                          <td className="px-6 py-7 text-gray-900 font-medium">
-                            <div className="flex items-center justify-between gap-1">
-                              <Link
-                                href={`/admin/kuadran/view/${kuadran.id}`}
-                                legacyBehavior
-                              >
-                                <a className="p-2 bg-green-600 rounded-lg cursor-pointer">
-                                  <TbReportSearch className="text-lg text-white cursor-pointer" />
-                                </a>
-                              </Link>
-                              <Link
-                                href={`/admin/kuadran/edit/${kuadran.id}`}
-                                legacyBehavior
-                              >
-                                <a className="p-2 bg-yellow-400 rounded-lg cursor-pointer">
-                                  <BiEdit className="text-lg text-white cursor-pointer" />
-                                </a>
-                              </Link>
-                              <DeleteButton
-                                endPointUrl={`/kuadran/${kuadran.id}`}
-                                getDataAgain={getAllDataKuadran}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </>
-                )}
-                {isFetching && (
-                  <tr className="border-b border-[#9FA284] border-opacity-20 hover:bg-gray-50">
-                    <td colSpan={8} className="px-5 p-7">
-                      <PageLoading />
-                    </td>
-                  </tr>
+                  dataAllReport.map((item, index) => (
+                    <tr key={item.id} className="bg-white border-b dark:bg-navy-700 dark:border-navy-600">
+                      <td className="px-6 py-8">{index + 1}</td>
+                      <td className="px-6 py-8">{item.bulan}</td>
+                      <td className="px-6 py-8">{item.tahun}</td>
+                      <td className="px-6 py-8">{item.createdAt}</td>
+                      <td className="px-6 py-8 text-center flex justify-center gap-4">
+                        <div className="flex items-center justify-between gap-1">
+                          <DeleteButton
+                            endPointUrl={`/report/${item.id}`}
+                            getDataAgain={fetchData}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
           </div>
-        </div>
 
-        {/* Pagination */}
-        <div className="flex justify-center space-x-3 mt-8">
-          <button
-            onClick={() => setCursor(null)}
-            disabled={cursor === null}
-            className={`${
-              cursor === null
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer"
-            } relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-white bg-gray-200 dark:bg-navy-700 dark:border-navy-700 border border-gray-200 dark:border-navy-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
-          >
-            First
-          </button>
-          <button
-            onClick={loadMore}
-            disabled={nextCursor === null || isFetching}
-            className={`${
-              nextCursor === null || isFetching
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer"
-            } relative inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-white bg-gray-200 dark:bg-navy-700 dark:border-navy-700 border border-gray-200 dark:border-navy-700 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
-          >
-            {isFetching ? "Loading..." : "Load More"}
-          </button>
+          <div className="flex justify-end mt-4">
+            <button
+              className="px-4 py-2 bg-gray-200 text-gray-600 rounded-md mr-2 disabled:opacity-50"
+              onClick={handlePreviousPage}
+              disabled={!cursor || isFetching}
+            >
+              Previous
+            </button>
+            <button
+              className="px-4 py-2 bg-gray-200 text-gray-600 rounded-md disabled:opacity-50"
+              onClick={handleNextPage}
+              disabled={isEndOfData || isFetching}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
     </>

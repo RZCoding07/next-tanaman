@@ -1,147 +1,240 @@
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 
-import image1 from '/public/img/usia.png';
-import image2 from '/public/img/pendidikan.png';
-import image3 from '/public/img/jenis kelamin.png';
-import image4 from '/public/img/status karyawan.png';
-import image5 from '/public/img/job grade.png';
-import image6 from '/public/img/person grade.png';
-
-
-import Image from 'next/image';
-
-import { isWindowAvailable } from 'utils/navigation';
-
-interface PieChartDashboardProps {
-  keterangan: string;
-  data: Array<{ name: string, value: number }>;
-  jenis: string;
-}
-
-const PieChartDashboard: React.FC<PieChartDashboardProps> = ({ keterangan, data, jenis }) => {
+const EChartsComponent: React.FC = () => {
   const chartRef = useRef<HTMLDivElement>(null);
-  function getImage(jenis) {
-    if (jenis == "usia") {
-      return image1.src;
-    }
-    if (jenis == "pendidikan") {
-      return image2.src;
-    }
-    if (jenis == "job_grade") {
-      return image5.src;
-    }
-    if (jenis == "person_grade") {
-      return image6.src;
-    }
-    if (jenis == "jenkel") {
-      return image3.src;
-    }
-    if (jenis == "status_karyawan") {
-      return image4.src;
-    }
-    return ''; // fallback in case jenis doesn't match any known type
-  }
 
   useEffect(() => {
-    const generateRandomColor = () => {
-      const letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
+    const builderJson = {
+      all: 10887,
+      charts: {
+        map: 3237,
+        lines: 2164,
+        bar: 7561,
+        line: 7778,
+        pie: 7355,
+        scatter: 2405,
+        candlestick: 1842,
+        radar: 2090,
+        heatmap: 1762,
+        treemap: 1593,
+        graph: 2060,
+        boxplot: 1537,
+        parallel: 1908,
+        gauge: 2107,
+        funnel: 1692,
+        sankey: 1568
+      },
+      components: {
+        geo: 2788,
+        title: 9575,
+        legend: 9400,
+        tooltip: 9466,
+        grid: 9266,
+        markPoint: 3419,
+        markLine: 2984,
+        timeline: 2739,
+        dataZoom: 2744,
+        visualMap: 2466,
+        toolbox: 3034,
+        polar: 1945
+      },
+      ie: 9743
     };
-  
-    const dataWithColors = data.map(item => ({
-      ...item,
-      itemStyle: {
-        color: generateRandomColor()
-      }
-    }));
-  
+
+    const downloadJson = {
+      'echarts.min.js': 17365,
+      'echarts.simple.min.js': 4079,
+      'echarts.common.min.js': 6929,
+      'echarts.js': 14890
+    };
+
+    const themeJson = {
+      'dark.js': 1594,
+      'infographic.js': 925,
+      'shine.js': 1608,
+      'roma.js': 721,
+      'macarons.js': 2179,
+      'vintage.js': 1982
+    };
+
+    const waterMarkText = 'ECHARTS';
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = canvas.height = 100;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.globalAlpha = 0.08;
+    ctx.font = '20px Microsoft Yahei';
+    ctx.translate(50, 50);
+    ctx.rotate(-Math.PI / 4);
+    ctx.fillText(waterMarkText, 0, 0);
+
+    const option = {
+      backgroundColor: {
+        type: 'pattern',
+        image: canvas,
+        repeat: 'repeat'
+      },
+      tooltip: {},
+      title: [
+        {
+          text: '在线构建',
+          subtext: '总计 ' + builderJson.all,
+          left: '25%',
+          textAlign: 'center'
+        },
+        {
+          text: '各版本下载',
+          subtext:
+            '总计 ' +
+            Object.keys(downloadJson).reduce(function (all, key) {
+              return all + downloadJson[key];
+            }, 0),
+          left: '75%',
+          textAlign: 'center'
+        },
+        {
+
+          left: '75%',
+          top: '50%',
+
+        }
+      ],
+      grid: [
+        {
+          top: 50,
+          width: '50%',
+          bottom: '45%',
+          left: 10,
+          containLabel: true
+        },
+        {
+          top: '55%',
+          width: '50%',
+          bottom: 0,
+          left: 10,
+          containLabel: true
+        }
+      ],
+      xAxis: [
+        {
+          type: 'value',
+          max: builderJson.all,
+          splitLine: {
+            show: false
+          }
+        },
+        {
+          type: 'value',
+          max: builderJson.all,
+          gridIndex: 1,
+          splitLine: {
+            show: false
+          }
+        }
+      ],
+      yAxis: [
+        {
+          type: 'category',
+          data: Object.keys(builderJson.charts),
+          axisLabel: {
+            interval: 0,
+            rotate: 30
+          },
+          splitLine: {
+            show: false
+          }
+        },
+        {
+          gridIndex: 1,
+          type: 'category',
+          data: Object.keys(builderJson.components),
+          axisLabel: {
+            interval: 0,
+            rotate: 30
+          },
+          splitLine: {
+            show: false
+          }
+        }
+      ],
+      series: [
+        {
+          type: 'bar',
+          stack: 'chart',
+          z: 3,
+          label: {
+            position: 'right',
+            show: true
+          },
+          data: Object.keys(builderJson.charts).map(function (key) {
+            return builderJson.charts[key];
+          })
+        },
+        {
+          type: 'bar',
+          stack: 'chart',
+          silent: true,
+          itemStyle: {
+            color: '#eee'
+          },
+          data: Object.keys(builderJson.charts).map(function (key) {
+            return builderJson.all - builderJson.charts[key];
+          })
+        },
+        {
+          type: 'bar',
+          stack: 'component',
+          xAxisIndex: 1,
+          yAxisIndex: 1,
+          z: 3,
+          label: {
+            position: 'right',
+            show: true
+          },
+          data: Object.keys(builderJson.components).map(function (key) {
+            return builderJson.components[key];
+          })
+        },
+        {
+          type: 'bar',
+          stack: 'component',
+          silent: true,
+          xAxisIndex: 1,
+          yAxisIndex: 1,
+          itemStyle: {
+            color: '#eee'
+          },
+          data: Object.keys(builderJson.components).map(function (key) {
+            return builderJson.all - builderJson.components[key];
+          })
+        },
+        {
+          type: 'pie',
+         top: 100,
+          radius: [0, '30%'],
+          center: ['75%', '25%'],
+          data: Object.keys(downloadJson).map(function (key) {
+            return {
+              name: key.replace('.js', ''),
+              value: downloadJson[key]
+            };
+          })
+        }
+      ]
+    };
+
     if (chartRef.current) {
       const myChart = echarts.init(chartRef.current);
-  
-      const options = {
-        tooltip: {
-          trigger: 'item',
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          borderColor: '#ddd',
-          borderWidth: 1,
-          padding: 10,
-          textStyle: {
-            fontSize: 14
-          }
-        },
-        legend: {
-          orient: 'vertical',
-          left: 'left',
-          top: 'center',
-          padding: 10,
-        },
-        series: [
-          {
-            type: 'pie',
-            left: 'center',
-            radius: ['45%', '70%'],
-            avoidLabelOverlap: false,
-            itemStyle: {
-              borderRadius: 10,
-              borderWidth: 5,
-              borderColor: '#fff'
-            },
-            label: {
-              show: true,
-              position: 'outside',
-              align: 'right',
-              fontSize: 14,
-              fontWeight: 'bold',
-              formatter: '{b}: \n ({d}%)',
-              zIndex: 9999
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: 16,
-                fontWeight: 'bold'
-              }
-            },
-            labelLine: {
-              show: true,
-              length: 20,
-              length2: 10,
-              lineStyle: {
-                width: 2
-              }
-            },
-            data: dataWithColors
-          }
-        ],
-        graphic: {
-          elements: [
-            {
-              type: 'image',
-              style: {
-                image: getImage(jenis),
-                width: 145,
-                height: 145,
-              },
-              left: 'center',
-              top: 'center',
-            }
-          ]
-        }
-      };
-  
-      myChart.setOption(options);
-  
+      myChart.setOption(option);
+
       return () => {
         myChart.dispose();
       };
     }
-  }, [data, keterangan, jenis]);
-  
+  }, []);
 
   return (
     <div
@@ -149,7 +242,7 @@ const PieChartDashboard: React.FC<PieChartDashboardProps> = ({ keterangan, data,
       className='w-full h-96 bg-white dark:bg-navy-900 dark:text-white border border-green-500 dark:border-orange-500 rounded-lg shadow-lg'
       style={{
         width: '100%',
-        height: '400px', // Ensure the container has a height
+        height: '400px',
         margin: 'auto',
         float: 'right'
       }}
@@ -157,4 +250,4 @@ const PieChartDashboard: React.FC<PieChartDashboardProps> = ({ keterangan, data,
   );
 };
 
-export default PieChartDashboard;
+export default EChartsComponent;

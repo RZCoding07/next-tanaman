@@ -28,7 +28,6 @@ type KuadranType = {
     jlh_pokok: string;
     pkk_ha: string;
     rpc: string;
-    kebun_: string;
     r: string;
     warna: string;
     bulan: string;
@@ -49,6 +48,7 @@ const UploadIplFile: React.FC = (): JSX.Element => {
     const [values, setValues] = useState<string[][]>([]);
     const [fileName, setFileName] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [reportId, setReportId] = useState<number | null>(null);
     const [selectedMonth, setSelectedMonth] = useState<{ label: string; value: string } | null>(null);
     const [selectedYear, setSelectedYear] = useState<{ label: string; value: number } | null>(null);
 
@@ -178,9 +178,9 @@ const UploadIplFile: React.FC = (): JSX.Element => {
                     jlh_pokok: value[8],
                     pkk_ha: value[9],
                     rpc: value[10],
-                    kebun_: value[11], 
-                    r: value[12],
-                    warna: value[13],
+                    r: value[11],
+                    warna: value[12],
+                    report_id: reportId,
                     bulan: selectedMonth.value,
                     tahun: selectedYear.value
                 }))
@@ -189,6 +189,36 @@ const UploadIplFile: React.FC = (): JSX.Element => {
     }, [values, selectedMonth, selectedYear]);
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
+    const [colorCounts, setColorCounts] = useState({
+        HIJAU: 0,
+        HITAM: 0,
+        EMAS: 0,
+        MERAH: 0,
+        KUNING: 0,
+    });
+
+    const [statusUmurCounts, setStatusUmurCounts] = useState({
+        Renta: 0,
+        Tua: 0,
+        Dewasa: 0,
+        Remaja: 0,
+        Muda: 0,
+    });
+
+    useEffect(() => {
+        const colorCounts = { HIJAU: 0, HITAM: 0, EMAS: 0, MERAH: 0, KUNING: 0 };
+        const statusUmurCounts = { Renta: 0, Tua: 0, Dewasa: 0, Remaja: 0, Muda: 0 };
+
+        mappedData.forEach((data) => {
+            colorCounts[data.warna] = (colorCounts[data.warna] || 0) + 1;
+            statusUmurCounts[data.status_umur] = (statusUmurCounts[data.status_umur] || 0) + 1;
+        });
+
+        setColorCounts(colorCounts);
+        setStatusUmurCounts(statusUmurCounts);
+    }, [mappedData]);
 
     const handleUploadKuadran = async (
         mappedData,
@@ -204,6 +234,43 @@ const UploadIplFile: React.FC = (): JSX.Element => {
         const tokenData = JSON.parse(loginData || "{}");
         const chunkSize = Math.ceil(mappedData.length / 10);
         const uploadPromises = [];
+
+        const reportRes = await fetch(`${apiUrl}/report`, {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${tokenData.payload.access_token}`,
+            },
+            body: JSON.stringify({
+              bulan: selectedMonth.value,
+              tahun: selectedYear.value,
+              renta: statusUmurCounts.Renta,
+              tua: statusUmurCounts.Tua,
+              dewasa: statusUmurCounts.Dewasa,
+              remaja: statusUmurCounts.Remaja,
+              muda: statusUmurCounts.Muda,
+              hitam: colorCounts.HITAM,
+              merah: colorCounts.MERAH,
+              kuning: colorCounts.KUNING,
+              hijau: colorCounts.HIJAU,
+              emas: colorCounts.EMAS
+            }),
+          });
+    
+          const reportData = await reportRes.json();
+          if (reportData.status_code === 200) {
+            setReportId(reportData.payload.id);
+
+            mappedData.forEach((data) => {
+                data.report_id = reportData.payload.id;
+                });
+                
+
+            toast.success(`Laporan bulan ${selectedMonth.label} tahun ${selectedYear.value} berhasil dibuat!`);
+          } else {
+            toast.error("Gagal membuat laporan!");
+          }
       
         for (let i = 0; i < 10; i++) {
           const chunk = mappedData.slice(i * chunkSize, (i + 1) * chunkSize);
@@ -221,17 +288,10 @@ const UploadIplFile: React.FC = (): JSX.Element => {
         }
       
         try {
+
+            
           const results = await Promise.all(uploadPromises);
           let allSuccessful = true;
-      
-        //   results.forEach((data, index) => {
-        //     if (data.status_code === 200) {
-        //       toast.success(`Batch ${index + 1} uploaded successfully!`);
-        //     } else {
-        //       allSuccessful = false;
-        //       toast.error(`Batch ${index + 1} failed to upload!`);
-        //     }
-        //   });
       
           const totalBatches = 10;
           for (let i = 0; i < totalBatches; i++) {
@@ -242,31 +302,10 @@ const UploadIplFile: React.FC = (): JSX.Element => {
       
           if (allSuccessful) {
             toast.success("All data uploaded successfully!");
+            
             setIsUploadingDone(true);
-            setTimeout(() => {
-              router.push("/admin/kuadran");
-            }, 2000);
-      
             // Create report
-            const reportRes = await fetch(`${apiUrl}/report`, {
-              method: "POST",
-              headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${tokenData.payload.access_token}`,
-              },
-              body: JSON.stringify({
-                bulan: selectedMonth.value,
-                tahun: selectedYear.value,
-              }),
-            });
-      
-            const reportData = await reportRes.json();
-            if (reportData.status_code === 200) {
-              toast.success(`Laporan bulan ${selectedMonth.label} tahun ${selectedYear.value} berhasil dibuat!`);
-            } else {
-              toast.error("Gagal membuat laporan!");
-            }
+
           } else {
             toast.error("Some chunks failed to upload!");
           }
