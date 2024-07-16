@@ -23,6 +23,8 @@ const Dashboard = () => {
   const chartRef1 = useRef<HTMLDivElement>(null);
   const chartRef2 = useRef<HTMLDivElement>(null);
   const chartRef3 = useRef<HTMLDivElement>(null);
+  const chartRef4 = useRef<HTMLDivElement>(null);
+  const chartRef5 = useRef<HTMLDivElement>(null);
 
   const [darkmode, setDarkmode] = React.useState(
     document.body.classList.contains('dark')
@@ -54,6 +56,582 @@ const Dashboard = () => {
       setDarkmode(true);
     }
   };
+
+  useEffect(() => {
+    handleDarkmode();
+    if (chartRef.current) {
+      const chartDom = chartRef.current;
+      const myChart = echarts.init(chartDom);
+      let option: echarts.EChartsOption;
+
+
+      option = {
+        legend: {
+          textStyle: {
+            color: color === "dark" ? "#000" : "fff",
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          showContent: false
+        },
+        dataset: {
+          source: [
+            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+          ],
+        },
+        xAxis: { type: 'category' },
+        yAxis: { gridIndex: 0 },
+        grid: { top: '55%' },
+        series: [
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            emphasis: {
+              focus: 'self'
+            },
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }
+        ]
+      };
+
+
+      myChart.on('updateAxisPointer', function (event: any) {
+        const xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+          const dimension = xAxisInfo.value + 1;
+          myChart.setOption<echarts.EChartsOption>({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+        }
+      });
+
+      myChart.setOption<echarts.EChartsOption>(option);
+    }
+    if (chartRef1.current) {
+      const chartDom1 = chartRef1.current;
+      const myChart1 = echarts.init(chartDom1);
+      let option: echarts.EChartsOption;
+
+
+      option = {
+        legend: {
+          textStyle: {
+            color: color === "dark" ? "#000" : "fff",
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          showContent: false
+        },
+        dataset: {
+          source: [
+            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+          ],
+        },
+        xAxis: { type: 'category' },
+        yAxis: { gridIndex: 0 },
+        grid: { top: '55%' },
+        series: [
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            emphasis: {
+              focus: 'self'
+            },
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }
+        ]
+      };
+
+
+      myChart1.on('updateAxisPointer', function (event: any) {
+        const xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+          const dimension = xAxisInfo.value + 1;
+          myChart1.setOption<echarts.EChartsOption>({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+        }
+      });
+
+      myChart1.setOption<echarts.EChartsOption>(option);
+    }
+    if (chartRef2.current) {
+      const chartDom2 = chartRef2.current;
+      const myChart2 = echarts.init(chartDom2);
+      let option: echarts.EChartsOption;
+
+
+      option = {
+        legend: {
+          textStyle: {
+            color: color === "dark" ? "#000" : "fff",
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          showContent: false
+        },
+        dataset: {
+          source: [
+            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+          ],
+        },
+        xAxis: { type: 'category' },
+        yAxis: { gridIndex: 0 },
+        grid: { top: '55%' },
+        series: [
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            emphasis: {
+              focus: 'self'
+            },
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }
+        ]
+      };
+
+
+      myChart2.on('updateAxisPointer', function (event: any) {
+        const xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+          const dimension = xAxisInfo.value + 1;
+          myChart2.setOption<echarts.EChartsOption>({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+        }
+      });
+
+      myChart2.setOption<echarts.EChartsOption>(option);
+    }
+    if (chartRef3.current) {
+      const chartDom3 = chartRef3.current;
+      const myChart3 = echarts.init(chartDom3);
+      let option: echarts.EChartsOption;
+
+
+      option = {
+        legend: {
+          textStyle: {
+            color: color === "dark" ? "#000" : "fff",
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          showContent: false
+        },
+        dataset: {
+          source: [
+            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+          ],
+        },
+        xAxis: { type: 'category' },
+        yAxis: { gridIndex: 0 },
+        grid: { top: '55%' },
+        series: [
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            emphasis: {
+              focus: 'self'
+            },
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }
+        ]
+      };
+
+
+      myChart3.on('updateAxisPointer', function (event: any) {
+        const xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+          const dimension = xAxisInfo.value + 1;
+          myChart3.setOption<echarts.EChartsOption>({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+        }
+      });
+
+      myChart3.setOption<echarts.EChartsOption>(option);
+    }
+    if (chartRef4.current) {
+      const chartDom4 = chartRef4.current;
+      const myChart4 = echarts.init(chartDom4);
+      let option: echarts.EChartsOption;
+
+
+      option = {
+        legend: {
+          textStyle: {
+            color: color === "dark" ? "#000" : "fff",
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          showContent: false
+        },
+        dataset: {
+          source: [
+            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+          ],
+        },
+        xAxis: { type: 'category' },
+        yAxis: { gridIndex: 0 },
+        grid: { top: '55%' },
+        series: [
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            emphasis: {
+              focus: 'self'
+            },
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }
+        ]
+      };
+
+
+      myChart4.on('updateAxisPointer', function (event: any) {
+        const xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+          const dimension = xAxisInfo.value + 1;
+          myChart4.setOption<echarts.EChartsOption>({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+        }
+      });
+
+      myChart4.setOption<echarts.EChartsOption>(option);
+    }
+    if (chartRef5.current) {
+      const chartDom5 = chartRef5.current;
+      const myChart5 = echarts.init(chartDom5);
+      let option: echarts.EChartsOption;
+
+
+      option = {
+        legend: {
+          textStyle: {
+            color: color === "dark" ? "#000" : "fff",
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          showContent: false
+        },
+        dataset: {
+          source: [
+            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
+            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
+            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
+            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
+            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
+          ],
+        },
+        xAxis: { type: 'category' },
+        yAxis: { gridIndex: 0 },
+        grid: { top: '55%' },
+        series: [
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'line',
+            smooth: true,
+            seriesLayoutBy: 'row',
+            emphasis: { focus: 'series' }
+          },
+          {
+            type: 'pie',
+            id: 'pie',
+            radius: '30%',
+            center: ['50%', '25%'],
+            emphasis: {
+              focus: 'self'
+            },
+            label: {
+              formatter: '{b}: {@2012} ({d}%)'
+            },
+            encode: {
+              itemName: 'product',
+              value: '2012',
+              tooltip: '2012'
+            }
+          }
+        ]
+      };
+
+
+      myChart5.on('updateAxisPointer', function (event: any) {
+        const xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+          const dimension = xAxisInfo.value + 1;
+          myChart5.setOption<echarts.EChartsOption>({
+            series: {
+              id: 'pie',
+              label: {
+                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+              },
+              encode: {
+                value: dimension,
+                tooltip: dimension
+              }
+            }
+          });
+        }
+      });
+
+      myChart5.setOption<echarts.EChartsOption>(option);
+    }
+
+  }, []);
+
 
   if (isWindowAvailable()) {
     document.title = 'Dashboard';

@@ -1,6 +1,7 @@
 import React from 'react';
 
 // Admin Imports
+import { GiMagnifyingGlass } from "react-icons/gi";
 
 // Icon Imports
 import {
@@ -21,6 +22,8 @@ import { PiTreePalmFill } from "react-icons/pi";
 
 import { BsFileEarmarkBarGraph } from "react-icons/bs";
 
+import { PiChartScatterDuotone } from "react-icons/pi";
+
 // why 
 import { TbAdjustmentsQuestion } from "react-icons/tb";
 
@@ -30,6 +33,18 @@ const routes = [
     layout: '/admin',
     path: 'default',
     icon: <MdHome className="h-6 w-6" />,
+  },
+  {
+    name: 'Grafik Kuadran',
+    layout: '/admin',
+    path: 'grafik',
+    icon: <PiChartScatterDuotone className="h-6 w-6" />,
+  },
+  {
+    name: 'Identifikasi Masalah',
+    layout: '/admin',
+    path: 'identifikasi-masalah',
+    icon: < GiMagnifyingGlass className="h-6 w-6" />,
   },
   {
     name: 'Data Users',
