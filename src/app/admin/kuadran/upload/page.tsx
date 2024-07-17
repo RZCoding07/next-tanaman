@@ -1,14 +1,13 @@
 "use client";
-import React, { useState, useEffect, useRef, useId } from "react";
+import React, { useState, useEffect, useId } from "react";
 import cookie from "js-cookie";
 import Papa from "papaparse";
 import { BsFillCheckCircleFill, BsTrash } from "react-icons/bs";
 import readXlsxFile, { Row } from "read-excel-file";
 import Select from "react-select";
 import { FaFileExcel } from "react-icons/fa";
-import { useController, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Tokens } from "types/token";
 import { useRouter } from "next/navigation";
 import { isWindowAvailable } from "utils/navigation";
 
@@ -32,6 +31,7 @@ type KuadranType = {
     warna: string;
     bulan: string;
     tahun: number;
+    report_id?: number;
 };
 
 const UploadIplFile: React.FC = (): JSX.Element => {
@@ -190,257 +190,237 @@ const UploadIplFile: React.FC = (): JSX.Element => {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-
-    const [colorCounts, setColorCounts] = useState({
-        HIJAU: 0,
-        HITAM: 0,
-        EMAS: 0,
-        MERAH: 0,
-        KUNING: 0,
-    });
-
-    const [statusUmurCounts, setStatusUmurCounts] = useState({
-        Renta: 0,
-        Tua: 0,
-        Dewasa: 0,
-        Remaja: 0,
-        Muda: 0,
-    });
+    const [kebunCounts, setKebunCounts] = useState<{ [kebun: string]: any }>({});
 
     useEffect(() => {
-        const colorCounts = { HIJAU: 0, HITAM: 0, EMAS: 0, MERAH: 0, KUNING: 0 };
-        const statusUmurCounts = { Renta: 0, Tua: 0, Dewasa: 0, Remaja: 0, Muda: 0 };
+        const newKebunCounts: { [kebun: string]: any } = {};
 
-        mappedData.forEach((data) => {
-            colorCounts[data.warna] = (colorCounts[data.warna] || 0) + 1;
-            statusUmurCounts[data.status_umur] = (statusUmurCounts[data.status_umur] || 0) + 1;
+        mappedData.forEach((item) => {
+            if (!newKebunCounts[item.kebun]) {
+                newKebunCounts[item.kebun] = {
+                    colorCounts: { HIJAU: 0, HITAM: 0, EMAS: 0, MERAH: 0, KUNING: 0 },
+                    statusUmurCounts: { Renta: 0, Tua: 0, Dewasa: 0, Remaja: 0, Muda: 0 },
+                    ageColorCounts: {
+                        renta_hitam: 0,
+                        renta_merah: 0,
+                        renta_kuning: 0,
+                        renta_hijau: 0,
+                        tua_hitam: 0,
+                        tua_merah: 0,
+                        tua_kuning: 0,
+                        tua_hijau: 0,
+                        dewasa_hitam: 0,
+                        dewasa_merah: 0,
+                        dewasa_kuning: 0,
+                        dewasa_hijau: 0,
+                        remaja_hitam: 0,
+                        remaja_merah: 0,
+                        remaja_kuning: 0,
+                        remaja_hijau: 0,
+                        muda_hitam: 0,
+                        muda_merah: 0,
+                        muda_kuning: 0,
+                        muda_hijau: 0
+                    }
+                };
+            }
+
+            const kebunData = newKebunCounts[item.kebun];
+
+            const color = item.warna.toUpperCase();
+            if (kebunData.colorCounts[color] !== undefined) {
+                kebunData.colorCounts[color]++;
+            }
+
+            const status = item.status_umur.toUpperCase();
+            if (kebunData.statusUmurCounts[status] !== undefined) {
+                kebunData.statusUmurCounts[status]++;
+            }
+
+            const ageColorKey = `${item.status_umur.toLowerCase()}_${item.warna.toLowerCase()}`;
+            if (kebunData.ageColorCounts[ageColorKey] !== undefined) {
+                kebunData.ageColorCounts[ageColorKey]++;
+            }
         });
 
-        setColorCounts(colorCounts);
-        setStatusUmurCounts(statusUmurCounts);
+        setKebunCounts(newKebunCounts);
     }, [mappedData]);
 
-    const handleUploadKuadran = async (
-        mappedData,
-        apiUrl,
-        setIsLoadingUpload,
-        setProgressValue,
-        setIsUploadingDone,
-        selectedMonth,
-        selectedYear
-      ) => {
+    const handleUpload = async (): Promise<void> => {
+        const token = cookie.get("token");
+        if (!token) {
+            router.push("/login");
+            return;
+        }
+
+        if (!selectedMonth || !selectedYear) {
+            toast.error("Please select a month and year before uploading.");
+            return;
+        }
+
         setIsLoadingUpload(true);
-        const loginData = cookie.get("token");
-        const tokenData = JSON.parse(loginData || "{}");
-        const chunkSize = Math.ceil(mappedData.length / 10);
-        const uploadPromises = [];
+        setProgressValue(0);
 
-        const reportRes = await fetch(`${apiUrl}/report`, {
-            method: "POST",
-            headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${tokenData.payload.access_token}`,
-            },
-            body: JSON.stringify({
-              bulan: selectedMonth.value,
-              tahun: selectedYear.value,
-              renta: statusUmurCounts.Renta,
-              tua: statusUmurCounts.Tua,
-              dewasa: statusUmurCounts.Dewasa,
-              remaja: statusUmurCounts.Remaja,
-              muda: statusUmurCounts.Muda,
-              hitam: colorCounts.HITAM,
-              merah: colorCounts.MERAH,
-              kuning: colorCounts.KUNING,
-              hijau: colorCounts.HIJAU,
-              emas: colorCounts.EMAS
-            }),
-          });
-    
-          const reportData = await reportRes.json();
-          if (reportData.status_code === 200) {
-            setReportId(reportData.payload.id);
-
-            mappedData.forEach((data) => {
-                data.report_id = reportData.payload.id;
-                });
-                
-
-            toast.success(`Laporan bulan ${selectedMonth.label} tahun ${selectedYear.value} berhasil dibuat!`);
-          } else {
-            toast.error("Gagal membuat laporan!");
-          }
-      
-        for (let i = 0; i < 10; i++) {
-          const chunk = mappedData.slice(i * chunkSize, (i + 1) * chunkSize);
-          uploadPromises.push(
-            fetch(`${apiUrl}/kuadran/upload`, {
-              method: "POST",
-              headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${tokenData.payload.access_token}`,
-              },
-              body: JSON.stringify({ mappedData: chunk }),
-            }).then((res) => res.json())
-          );
-        }
-      
         try {
+            const response = await fetch(`${apiUrl}/api/ipl/upload`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    data: mappedData,
+                }),
+            });
 
-            
-          const results = await Promise.all(uploadPromises);
-          let allSuccessful = true;
-      
-          const totalBatches = 10;
-          for (let i = 0; i < totalBatches; i++) {
-            const progressPercent = ((i + 1) * 100) / totalBatches;
-            setProgressValue(progressPercent);
-            await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate async update for progress bar
-          }
-      
-          if (allSuccessful) {
-            toast.success("All data uploaded successfully!");
-            
-            setIsUploadingDone(true);
-            // Create report
-
-          } else {
-            toast.error("Some chunks failed to upload!");
-          }
-      
-          setIsLoadingUpload(false);
-          setTimeout(() => {
-            setIsUploadingDone(false);
-            setProgressValue(0);
-          }, 3000);
+            if (response.ok) {
+                setIsUploadingDone(true);
+                toast.success("Upload successful!");
+            } else {
+                toast.error("Upload failed!");
+            }
         } catch (error) {
-          console.error(error);
-          setIsLoadingUpload(false);
-          toast.error("Oops terjadi kesalahan, periksa koneksi dan coba lagi!");
-        }
-      };
-      
-
-      
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const handleButtonClick = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
+            console.error("Upload error:", error);
+            toast.error("An error occurred during upload.");
+        } finally {
+            setIsLoadingUpload(false);
         }
     };
 
     return (
-        <div>
-            <div className="flex items-end justify-end gap-3 mb-5 mt-5">
-                <a
-                    href="/assets/uploads/Template GL perbulan.xlsx"
-                    className="disabled:cursor-not-allowed px-5 py-[.675rem] text-sm font-semibold text-center text-white transition duration-300 ease-in-out bg-green-600 rounded-full cursor-pointer hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 flex justify-center space-x-4">
-                    Download Template
-                    <FaFileExcel className="ml-2 w-5 h-5" />
-                </a>
-            </div>
+        <div className="container mx-auto px-4">
+            <h1 className="text-2xl font-bold mb-4">Upload File Kuadran</h1>
 
-            <div className="flex items-center justify-center gap-3 mb-5 mt-5">
+            <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">
+                    Select Month
+                </label>
                 <Select
+                    instanceId={instanceId}
                     options={months}
                     value={selectedMonth}
                     onChange={(option) => setSelectedMonth(option)}
-                    placeholder="Pilih Bulan"
+                    placeholder="Select month"
                 />
+            </div>
+
+            <div className="mb-4">
+                <label className="block text-gray-700 font-bold mb-2">
+                    Select Year
+                </label>
                 <Select
+                    instanceId={instanceId}
                     options={years}
                     value={selectedYear}
                     onChange={(option) => setSelectedYear(option)}
-                    placeholder="Pilih Tahun"
+                    placeholder="Select year"
                 />
             </div>
 
             <div
-                className="flex items-center justify-center w-full"
+                className={`mb-4 border-2 border-dashed p-4 rounded ${
+                    loading ? "border-gray-300" : "border-gray-600"
+                }`}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
             >
-                <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer" htmlFor="fileInput" onClick={handleButtonClick}>
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg
-                            aria-hidden="true"
-                            className="w-10 h-10 mb-3 text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                        </svg>
-                        {fileName ? (
-                            <div className="flex items-center mb-2">
-                                <p className="text-sm text-gray-500 ">{fileName}</p>
-                                <BsTrash
-                                    className="ml-2 text-red-500 cursor-pointer"
-                                    onClick={handleRemoveFile}
-                                />
-                            </div>
-                        ) : !fileName && loading ? (
-                            "Loading..."
-                        ) : (
-                            <p className="mb-2 text-sm text-gray-500">
-                                <span className="font-semibold">
-                                    Klik untuk upload file .csv atau .xlsx
-                                </span>{" "}
-                                atau drag and drop
+                <input
+                    type="file"
+                    onChange={handleFileChange}
+                    accept=".csv, .xlsx"
+                    className="hidden"
+                    id="file-upload"
+                />
+                <label
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center justify-center h-32 cursor-pointer"
+                >
+                    {loading ? (
+                        <div className="loader"></div>
+                    ) : (
+                        <div>
+                            <FaFileExcel className="text-6xl mb-2 text-gray-500" />
+                            <p className="text-gray-500">
+                                {fileName || "Drag and drop a file here, or click to select a file"}
                             </p>
-                        )}
-                    </div>
-
-                    <input
-                        type="file"
-                        id="fileInput" // Add id attribute to match the htmlFor attribute of the label
-                        name="file"
-                        onChange={handleFileChange}
-                        accept=".csv, .xlsx"
-                        className="hidden"
-                        disabled={
-                            isLoadingUpload
-                        }
-                    />
+                        </div>
+                    )}
                 </label>
             </div>
-            <div className="flex items-center justify-end gap-3 mt-5">
-                {isLoadingUpload ? (
-                    <div className="w-1/6 bg-gray-200 rounded-full h-2.5 ">
-                        <div
-                            className="bg-green-600 transition ease-in-out h-2.5 rounded-full animate-blink"
-                            style={{ width: `${progressValue}%` }}
-                        ></div>
-                    </div>
-                ) : null}
 
-                {isUploadingDone ? (
-                    <BsFillCheckCircleFill className="text-green-600 w-7 h-7" />
-                ) : null}
-
-                {!isLoadingUpload ? (
+            {fileName && (
+                <div className="mb-4">
                     <button
-                        onClick={() => handleUploadKuadran(mappedData, apiUrl, setIsLoadingUpload, setProgressValue, setIsUploadingDone, selectedMonth, selectedYear)}
-                        disabled={
-                            !fileName ||
-                            isLoadingUpload ||
-                            !selectedMonth ||
-                            !selectedYear
-                        }
-                        className="disabled:cursor-not-allowed px-5 py-[.675rem] text-sm font-semibold text-center text-white transition duration-300 ease-in-out bg-green-600 rounded-full cursor-pointer hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300">
-                        Upload File
+                        className="bg-red-500 text-white px-4 py-2 rounded"
+                        onClick={handleRemoveFile}
+                    >
+                        Remove File
                     </button>
-                ) : null}
+                </div>
+            )}
+
+            {isUploadingDone ? (
+                <div className="mb-4 text-green-500">Upload completed!</div>
+            ) : (
+                <button
+                    className={`bg-blue-500 text-white px-4 py-2 rounded ${
+                        isLoadingUpload ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    onClick={handleUpload}
+                    disabled={isLoadingUpload}
+                >
+                    Upload
+                </button>
+            )}
+
+            {isLoadingUpload && (
+                <div className="my-4">
+                    <p>Uploading... {progressValue}%</p>
+                    <div className="relative pt-1">
+                        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200">
+                            <div
+                                style={{ width: `${progressValue}%` }}
+                                className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <div className="mt-8">
+                {Object.keys(kebunCounts).length > 0 ? (
+                    <div>
+                        <h2 className="text-xl font-bold mb-4">Ringkasan Data Per Kebun</h2>
+                        {Object.keys(kebunCounts).map((kebun, index) => (
+                            <div key={index} className="mb-4">
+                                <h3 className="text-lg font-bold mb-2">{kebun}</h3>
+                                <div>
+                                    <h4 className="font-bold">Kombinasi Warna:</h4>
+                                    <ul>
+                                        {Object.entries(kebunCounts[kebun].colorCounts).map(([color, count]) => (
+                                            <li key={color}>{color}: {count}</li>
+                                        ))}
+                                    </ul>
+                                    <h4 className="font-bold">Status Umur:</h4>
+                                    <ul>
+                                        {Object.entries(kebunCounts[kebun].statusUmurCounts).map(([status, count]) => (
+                                            <li key={status}>{status}: {count}</li>
+                                        ))}
+                                    </ul>
+                                    <h4 className="font-bold">Kombinasi Warna dan Status Umur:</h4>
+                                    <ul>
+                                        {Object.entries(kebunCounts[kebun].ageColorCounts).map(([combination, count]) => (
+                                            <li key={combination}>{combination}: {count}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p>No data available.</p>
+                )}
             </div>
-            <br />
-            <br />
         </div>
     );
 };
