@@ -420,19 +420,19 @@ const IdentifikasiMasalahList = () => {
                                             <td className="px-6 py-8">{item.r}</td>
                                             <td className="px-6 py-8">{item.warna}</td>
                                             <td className="px-6 py-8">
-                                                <Link
+                                                {/* <Link
                                                     href={`/admin/identifikasi-masalah/update/${item.id}`}
                                                     legacyBehavior>
                                                     <a className="p-2 bg-green-600 rounded-lg cursor-pointer">
                                                         <TbReportSearch className="text-lg text-white cursor-pointer" />
                                                     </a>
-                                                </Link>
-                                                {/* <button
+                                                </Link> */}
+                                                <button
                                                     onClick={() => handleOpenModal(item)}
                                                     className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                                 >
                                                     Isi Masalah
-                                                </button> */}
+                                                </button>
                                             </td>
                                         </tr>
                                     ))
