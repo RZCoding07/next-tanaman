@@ -204,16 +204,16 @@ const ModalIdentifikasiMasalah = ({ item, onClose }) => {
         <>
             <div className="w-full p-5 mx-auto mt-10 mb-10 border shadow-xl lg:w-3/4 rounded-2xl dark:bg-navy-800 dark:border-navy-800">
                 <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                    Tambah User
+                    Pilih Keterangan
                 </h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Tambahkan user baru dengan mengisi form di bawah ini.
+                    Silahkan pilih keterangan yang sesuai dengan masalah yang dihadapi.
                 </p>
                 <hr className="my-5 border-gray-300 dark:border-gray-700" />
                 <form onSubmit={handleSubmit(handleCreateUser)}>
                     <div className="mb-5">
                         <label className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">
-                            Username
+                            W1
                         </label>
                         <input
                             {...register("niksap", { required: true })}
