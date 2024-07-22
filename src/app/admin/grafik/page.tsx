@@ -82,6 +82,8 @@ const GrafikKuadran = () => {
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'KEBUN Z', 'Manajer Z'] }
             ];
 
+            console.log(data);
+
             // Function to find the maximum values for x and y axes
             function getMaxValues(data: any[]): { maxX: number, maxY: number } {
                 let maxX = 0;

@@ -237,7 +237,7 @@ const UploadIplFile: React.FC = (): JSX.Element => {
         setIsUploadingDone,
         selectedMonth,
         selectedYear
-      ) => {
+    ) => {
         setIsLoadingUpload(true);
         const loginData = cookie.get("token");
         const tokenData = JSON.parse(loginData || "{}");

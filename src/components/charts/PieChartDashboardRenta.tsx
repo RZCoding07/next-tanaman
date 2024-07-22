@@ -1,26 +1,29 @@
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 
-type DataChart = {
-  nameData: string;
-  downloadJsonData: any | null;
-  builderJsonData: any | null;
-};
-
-const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, builderJsonData }) => {
+const EChartsComponent: React.FC = () => {
   const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!builderJsonData || !downloadJsonData) {
-      return;
-    }
-
     const builderJson = {
-      all: builderJsonData.all,
-      charts: builderJsonData.charts,
+      all: 10887,
+      charts: {
+        hitam: 3237,
+        emas: 2164,
+        hijau: 7561,
+        kuning: 7778,
+        merah: 7355
+      },
+      ie: 9743
     };
 
-    const downloadJson = downloadJsonData;
+    const downloadJson = {
+      'hitam': 23546,
+      'emas': 17365,
+      'hijau': 4079,
+      'kuning': 6929,
+      'merah': 14890,
+    };
 
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -49,13 +52,13 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
       tooltip: {},
       title: [
         {
-          text: nameData,
+          text: 'Renta',
           subtext: 'Total ' + builderJson.all,
           left: '25%',
           textAlign: 'center'
         },
         {
-          text: nameData,
+          text: 'Renta',
           subtext: 'Total ' + Object.keys(downloadJson).reduce(function (all, key) {
             return all + downloadJson[key];
           }, 0),
@@ -144,13 +147,15 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
       ]
     };
 
-    const myChart = echarts.init(chartRef.current);
-    myChart.setOption(option);
+    if (chartRef.current) {
+      const myChart = echarts.init(chartRef.current);
+      myChart.setOption(option);
 
-    return () => {
-      myChart.dispose();
-    };
-  }, [nameData, downloadJsonData, builderJsonData]);
+      return () => {
+        myChart.dispose();
+      };
+    }
+  }, []);
 
   return (
     <div
