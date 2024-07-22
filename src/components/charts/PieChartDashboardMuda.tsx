@@ -1,26 +1,80 @@
 import React, { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 
-type DataChart = {
-  nameData: string;
-  downloadJsonData: any | null;
-  builderJsonData: any | null;
-};
-
-const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, builderJsonData }) => {
+const EChartsComponent: React.FC = () => {
   const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!builderJsonData || !downloadJsonData) {
-      return;
-    }
 
-    const builderJson = {
-      all: builderJsonData.all,
-      charts: builderJsonData.charts,
+    const dummy =
+    {
+      "status_code": 200,
+      "message": "Reports displayed successfully",
+      "payload": [
+        {
+          "id": 9,
+          "bulan": "1",
+          "tahun": "2024",
+          "renta": {
+            "hitam": 6825,
+            "merah": 991,
+            "kuning": 1069,
+            "hijau": 1132,
+            "emas": 19019,
+          },
+          "tua": {
+            "hitam": 6825,
+            "merah": 991,
+            "kuning": 1069,
+            "hijau": 1132,
+            "emas": 19019,
+          },
+          "dewasa": {
+            "hitam": 6825,
+            "merah": 991,
+            "kuning": 1069,
+            "hijau": 1132,
+            "emas": 19019,
+          },
+          "remaja": {
+            "hitam": 6825,
+            "merah": 991,
+            "kuning": 1069,
+            "hijau": 1132,
+            "emas": 19019,
+          },
+          "muda": {
+            "hitam": 6825,
+            "merah": 991,
+            "kuning": 1069,
+            "hijau": 1132,
+            "emas": 19019,
+          },
+          "createdAt": "2024-07-16T04:16:32.000Z",
+          "updatedAt": "2024-07-16T04:16:32.000Z"
+        }
+      ]
     };
 
-    const downloadJson = downloadJsonData;
+    console.log(dummy.payload[0].renta);
+
+    const builderJson = {
+      all: Object.values(dummy.payload[0].renta).reduce((sum, value) => sum + value, 0)
+      ,
+      charts:
+        dummy.payload[0].renta
+
+      ,
+      ie: 9743
+    };
+
+    const downloadJson = {
+      'hitam': 23546,
+      'emas': 17365,
+      'hijau': 4079,
+      'kuning': 6929,
+      'merah': 14890,
+    };
 
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -49,13 +103,13 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
       tooltip: {},
       title: [
         {
-          text: nameData,
+          text: 'Muda',
           subtext: 'Total ' + builderJson.all,
           left: '25%',
           textAlign: 'center'
         },
         {
-          text: nameData,
+          text: 'Muda',
           subtext: 'Total ' + Object.keys(downloadJson).reduce(function (all, key) {
             return all + downloadJson[key];
           }, 0),
@@ -144,13 +198,15 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
       ]
     };
 
-    const myChart = echarts.init(chartRef.current);
-    myChart.setOption(option);
+    if (chartRef.current) {
+      const myChart = echarts.init(chartRef.current);
+      myChart.setOption(option);
 
-    return () => {
-      myChart.dispose();
-    };
-  }, [nameData, downloadJsonData, builderJsonData]);
+      return () => {
+        myChart.dispose();
+      };
+    }
+  }, []);
 
   return (
     <div

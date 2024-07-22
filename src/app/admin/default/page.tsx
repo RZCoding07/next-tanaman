@@ -8,23 +8,29 @@ import { useController, useForm } from "react-hook-form";
 import Select from 'react-select';
 import * as echarts from 'echarts';
 
+
+import { CanvasRenderer } from 'echarts/renderers';
+import { BarChart } from 'echarts/charts';
+import { TooltipComponent, TitleComponent, GridComponent } from 'echarts/components';
+
+// Register necessary components
+echarts.use([TooltipComponent, TitleComponent, GridComponent, BarChart, PieChart, CanvasRenderer]);
+
+
 import NavLink from "components/link/NavLink";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { NumericFormat } from "react-number-format";
 import { isWindowAvailable } from "utils/navigation";
 import PieChartDashboard from 'components/charts/PieChartDashboard';
+
+import PieChart from 'components/charts/PieChart';
+
 import cookie from "js-cookie";
 import { Tokens } from "types/token";
 
 
 const Dashboard = () => {
-  const chartRef = useRef<HTMLDivElement>(null);
-  const chartRef1 = useRef<HTMLDivElement>(null);
-  const chartRef2 = useRef<HTMLDivElement>(null);
-  const chartRef3 = useRef<HTMLDivElement>(null);
-  const chartRef4 = useRef<HTMLDivElement>(null);
-  const chartRef5 = useRef<HTMLDivElement>(null);
 
   const [darkmode, setDarkmode] = React.useState(
     document.body.classList.contains('dark')
@@ -59,576 +65,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     handleDarkmode();
-    if (chartRef.current) {
-      const chartDom = chartRef.current;
-      const myChart = echarts.init(chartDom);
-      let option: echarts.EChartsOption;
 
-
-      option = {
-        legend: {
-          textStyle: {
-            color: color === "dark" ? "#000" : "fff",
-          }
-        },
-        tooltip: {
-          trigger: 'axis',
-          showContent: false
-        },
-        dataset: {
-          source: [
-            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
-          ],
-        },
-        xAxis: { type: 'category' },
-        yAxis: { gridIndex: 0 },
-        grid: { top: '55%' },
-        series: [
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
-            emphasis: {
-              focus: 'self'
-            },
-            label: {
-              formatter: '{b}: {@2012} ({d}%)'
-            },
-            encode: {
-              itemName: 'product',
-              value: '2012',
-              tooltip: '2012'
-            }
-          }
-        ]
-      };
-
-
-      myChart.on('updateAxisPointer', function (event: any) {
-        const xAxisInfo = event.axesInfo[0];
-        if (xAxisInfo) {
-          const dimension = xAxisInfo.value + 1;
-          myChart.setOption<echarts.EChartsOption>({
-            series: {
-              id: 'pie',
-              label: {
-                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-              },
-              encode: {
-                value: dimension,
-                tooltip: dimension
-              }
-            }
-          });
-        }
-      });
-
-      myChart.setOption<echarts.EChartsOption>(option);
-    }
-    if (chartRef1.current) {
-      const chartDom1 = chartRef1.current;
-      const myChart1 = echarts.init(chartDom1);
-      let option: echarts.EChartsOption;
-
-
-      option = {
-        legend: {
-          textStyle: {
-            color: color === "dark" ? "#000" : "fff",
-          }
-        },
-        tooltip: {
-          trigger: 'axis',
-          showContent: false
-        },
-        dataset: {
-          source: [
-            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
-          ],
-        },
-        xAxis: { type: 'category' },
-        yAxis: { gridIndex: 0 },
-        grid: { top: '55%' },
-        series: [
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
-            emphasis: {
-              focus: 'self'
-            },
-            label: {
-              formatter: '{b}: {@2012} ({d}%)'
-            },
-            encode: {
-              itemName: 'product',
-              value: '2012',
-              tooltip: '2012'
-            }
-          }
-        ]
-      };
-
-
-      myChart1.on('updateAxisPointer', function (event: any) {
-        const xAxisInfo = event.axesInfo[0];
-        if (xAxisInfo) {
-          const dimension = xAxisInfo.value + 1;
-          myChart1.setOption<echarts.EChartsOption>({
-            series: {
-              id: 'pie',
-              label: {
-                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-              },
-              encode: {
-                value: dimension,
-                tooltip: dimension
-              }
-            }
-          });
-        }
-      });
-
-      myChart1.setOption<echarts.EChartsOption>(option);
-    }
-    if (chartRef2.current) {
-      const chartDom2 = chartRef2.current;
-      const myChart2 = echarts.init(chartDom2);
-      let option: echarts.EChartsOption;
-
-
-      option = {
-        legend: {
-          textStyle: {
-            color: color === "dark" ? "#000" : "fff",
-          }
-        },
-        tooltip: {
-          trigger: 'axis',
-          showContent: false
-        },
-        dataset: {
-          source: [
-            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
-          ],
-        },
-        xAxis: { type: 'category' },
-        yAxis: { gridIndex: 0 },
-        grid: { top: '55%' },
-        series: [
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
-            emphasis: {
-              focus: 'self'
-            },
-            label: {
-              formatter: '{b}: {@2012} ({d}%)'
-            },
-            encode: {
-              itemName: 'product',
-              value: '2012',
-              tooltip: '2012'
-            }
-          }
-        ]
-      };
-
-
-      myChart2.on('updateAxisPointer', function (event: any) {
-        const xAxisInfo = event.axesInfo[0];
-        if (xAxisInfo) {
-          const dimension = xAxisInfo.value + 1;
-          myChart2.setOption<echarts.EChartsOption>({
-            series: {
-              id: 'pie',
-              label: {
-                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-              },
-              encode: {
-                value: dimension,
-                tooltip: dimension
-              }
-            }
-          });
-        }
-      });
-
-      myChart2.setOption<echarts.EChartsOption>(option);
-    }
-    if (chartRef3.current) {
-      const chartDom3 = chartRef3.current;
-      const myChart3 = echarts.init(chartDom3);
-      let option: echarts.EChartsOption;
-
-
-      option = {
-        legend: {
-          textStyle: {
-            color: color === "dark" ? "#000" : "fff",
-          }
-        },
-        tooltip: {
-          trigger: 'axis',
-          showContent: false
-        },
-        dataset: {
-          source: [
-            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
-          ],
-        },
-        xAxis: { type: 'category' },
-        yAxis: { gridIndex: 0 },
-        grid: { top: '55%' },
-        series: [
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
-            emphasis: {
-              focus: 'self'
-            },
-            label: {
-              formatter: '{b}: {@2012} ({d}%)'
-            },
-            encode: {
-              itemName: 'product',
-              value: '2012',
-              tooltip: '2012'
-            }
-          }
-        ]
-      };
-
-
-      myChart3.on('updateAxisPointer', function (event: any) {
-        const xAxisInfo = event.axesInfo[0];
-        if (xAxisInfo) {
-          const dimension = xAxisInfo.value + 1;
-          myChart3.setOption<echarts.EChartsOption>({
-            series: {
-              id: 'pie',
-              label: {
-                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-              },
-              encode: {
-                value: dimension,
-                tooltip: dimension
-              }
-            }
-          });
-        }
-      });
-
-      myChart3.setOption<echarts.EChartsOption>(option);
-    }
-    if (chartRef4.current) {
-      const chartDom4 = chartRef4.current;
-      const myChart4 = echarts.init(chartDom4);
-      let option: echarts.EChartsOption;
-
-
-      option = {
-        legend: {
-          textStyle: {
-            color: color === "dark" ? "#000" : "fff",
-          }
-        },
-        tooltip: {
-          trigger: 'axis',
-          showContent: false
-        },
-        dataset: {
-          source: [
-            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
-          ],
-        },
-        xAxis: { type: 'category' },
-        yAxis: { gridIndex: 0 },
-        grid: { top: '55%' },
-        series: [
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
-            emphasis: {
-              focus: 'self'
-            },
-            label: {
-              formatter: '{b}: {@2012} ({d}%)'
-            },
-            encode: {
-              itemName: 'product',
-              value: '2012',
-              tooltip: '2012'
-            }
-          }
-        ]
-      };
-
-
-      myChart4.on('updateAxisPointer', function (event: any) {
-        const xAxisInfo = event.axesInfo[0];
-        if (xAxisInfo) {
-          const dimension = xAxisInfo.value + 1;
-          myChart4.setOption<echarts.EChartsOption>({
-            series: {
-              id: 'pie',
-              label: {
-                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-              },
-              encode: {
-                value: dimension,
-                tooltip: dimension
-              }
-            }
-          });
-        }
-      });
-
-      myChart4.setOption<echarts.EChartsOption>(option);
-    }
-    if (chartRef5.current) {
-      const chartDom5 = chartRef5.current;
-      const myChart5 = echarts.init(chartDom5);
-      let option: echarts.EChartsOption;
-
-
-      option = {
-        legend: {
-          textStyle: {
-            color: color === "dark" ? "#000" : "fff",
-          }
-        },
-        tooltip: {
-          trigger: 'axis',
-          showContent: false
-        },
-        dataset: {
-          source: [
-            ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            ['Milk Tea', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-            ['Matcha Latte', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-            ['Cheese Cocoa', 40.1, 62.2, 69.5, 36.4, 45.2, 32.5],
-            ['Walnut Brownie', 25.2, 37.1, 41.2, 18, 33.9, 49.1]
-          ],
-        },
-        xAxis: { type: 'category' },
-        yAxis: { gridIndex: 0 },
-        grid: { top: '55%' },
-        series: [
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'line',
-            smooth: true,
-            seriesLayoutBy: 'row',
-            emphasis: { focus: 'series' }
-          },
-          {
-            type: 'pie',
-            id: 'pie',
-            radius: '30%',
-            center: ['50%', '25%'],
-            emphasis: {
-              focus: 'self'
-            },
-            label: {
-              formatter: '{b}: {@2012} ({d}%)'
-            },
-            encode: {
-              itemName: 'product',
-              value: '2012',
-              tooltip: '2012'
-            }
-          }
-        ]
-      };
-
-
-      myChart5.on('updateAxisPointer', function (event: any) {
-        const xAxisInfo = event.axesInfo[0];
-        if (xAxisInfo) {
-          const dimension = xAxisInfo.value + 1;
-          myChart5.setOption<echarts.EChartsOption>({
-            series: {
-              id: 'pie',
-              label: {
-                formatter: '{b}: {@[' + dimension + ']} ({d}%)'
-              },
-              encode: {
-                value: dimension,
-                tooltip: dimension
-              }
-            }
-          });
-        }
-      });
-
-      myChart5.setOption<echarts.EChartsOption>(option);
-    }
 
   }, []);
 
@@ -764,6 +201,187 @@ const Dashboard = () => {
     }
   };
 
+
+  const fetchFilteredData = async () => {
+    try {
+      const loginData = cookie.get("token");
+      const tokenData = JSON.parse(loginData || "{}");
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/grafik/filter?tahun=2024&bulan=1&rpc=&kebun=&afd=`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${tokenData.payload.access_token}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const resultData = await res.json();
+      return resultData;
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      throw error;
+    }
+  };
+
+  const processPieData = (setPieData: any, data: any, category: string, stateName: string) => {
+    if (data.result && data.result[category]) {
+      const categoryData = data.result[category];
+
+      const builderJson = {
+        all: categoryData.hitam + categoryData.emas + categoryData.hijau + categoryData.kuning + categoryData.merah,
+        charts: {
+          hitam: categoryData.hitam,
+          emas: categoryData.emas,
+          hijau: categoryData.hijau,
+          kuning: categoryData.kuning,
+          merah: categoryData.merah,
+        },
+      };
+
+      const downloadJson = {
+        hitam: categoryData.hitam,
+        emas: categoryData.emas,
+        hijau: categoryData.hijau,
+        kuning: categoryData.kuning,
+        merah: categoryData.merah,
+      };
+
+      setPieData({ [`builderJson${stateName}`]: builderJson, [`downloadJson${stateName}`]: downloadJson });
+    } else {
+      console.error(`Failed to fetch data for ${category}: `, data.message);
+    }
+  };
+
+
+
+
+  const instanceId = useId();
+
+  const [pieDataTua, setPieDataTua] = React.useState<any>({
+    builderJsonTua: null,
+    downloadJsonTua: null,
+  });
+  const [pieDataRemaja, setPieDataRemaja] = React.useState<any>({
+    builderJsonRemaja: null,
+    downloadJsonRemaja: null,
+  });
+  const [pieDataRenta, setPieDataRenta] = React.useState<any>({
+    builderJsonRenta: null,
+    downloadJsonRenta: null,
+  });
+  const [pieDataMuda, setPieDataMuda] = React.useState<any>({
+    builderJsonMuda: null,
+    downloadJsonMuda: null,
+  });
+  const [pieDataDewasa, setPieDataDewasa] = React.useState<any>({
+    builderJsonDewasa: null,
+    downloadJsonDewasa: null,
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const resultData = await fetchFilteredData();
+        processPieData(setPieDataTua, resultData, 'tua', 'Tua');
+        processPieData(setPieDataRemaja, resultData, 'remaja', 'Remaja');
+        processPieData(setPieDataRenta, resultData, 'renta', 'Renta');
+        processPieData(setPieDataMuda, resultData, 'muda', 'Muda');
+        processPieData(setPieDataDewasa, resultData, 'dewasa', 'Dewasa');
+      } catch (error) {
+        console.error("Error fetching and processing data", error);
+      }
+    };
+
+    fetchData();
+
+    getAllReport();
+  }, []);
+
+
+  type Gata = {
+    keterangan: {
+      value: string;
+      label: string;
+    },
+    regional: {
+      value: string;
+      label: string;
+    },
+    kebun: {
+      value: string;
+      label: string;
+    },
+    tahun: {
+      value: string;
+      label: string;
+    },
+    bulan: {
+      value: string;
+      label: string;
+    };
+  };
+
+
+
+  // Dummy data for dropdown options (replace with actual data)
+  let regionalOptions = [
+    { value: 'region1', label: 'Region 1' },
+    { value: 'region2', label: 'Region 2' },
+    // Add more regional options as needed
+  ];
+
+  let kebunOptions = [
+    { value: 'kebun1', label: 'Kebun 1' },
+    { value: 'kebun2', label: 'Kebun 2' },
+    // Add more kebun options as needed
+  ];
+
+  let tahunOptions = [
+    { value: '2022', label: '2022' },
+    { value: '2023', label: '2023' },
+    // Add more tahun options as needed
+  ];
+
+  let bulanOptions = [
+    { value: 'january', label: 'January' },
+    { value: 'february', label: 'February' },
+    // Add more bulan options as needed
+  ];
+
+
+  const handleIsRegionalSelectChange = (
+    value: { value: string; label: string; } | null
+  ) => {
+    if (value) {
+      setValue("regional", value); // Set nilai kebun ke yang dipilih oleh pengguna
+      console.log(value);
+    }
+  };
+
+  const handleIsKebunSelectChange = (
+    value: { value: string; label: string; } | null
+  ) => {
+    if (value) {
+      setValue("kebun", value); // Set nilai kebun ke yang dipilih oleh pengguna
+      console.log(value);
+    }
+  };
+
+  const handleIsTahunSelectChange = (
+    value: { value: string; label: string; } | null
+  ) => {
+    if (value) {
+      setValue("tahun", value); // Set nilai kebun ke yang dipilih oleh pengguna
+      console.log(value);
+    }
+  };
+
+
   const {
     register,
     handleSubmit,
@@ -771,95 +389,151 @@ const Dashboard = () => {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<Data>({
+  } = useForm<Gata>({
     defaultValues: {
+      regional: regionalOptions[0],
+      kebun: kebunOptions[0],
+      tahun: tahunOptions[0],
+      bulan: bulanOptions[0],
 
     },
   });
 
-  const instanceId = useId();
-
-  useEffect(() => {
-    getAllReport();
-  }, []);
-
-
   return (
-    <>
-      <div className="w-full min-h-screen">
-        <div className="flex ustify-end gap-2 mt-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4">
-            <Select
-              instanceId={instanceId}
-              inputId="report"
-              name="report"
-              options={dataReport}
-              styles={customStyles}
-              placeholder="Pilih Tahun"
-              isSearchable={true}
-              defaultValue={dataReport[0]}
-              isClearable={true}
-              {...register('report')}
-            />
+    <div className="w-full min-h-screen">
+
+      <div className="mt-10 mb-5">
+        <div className="relative overflow-x-auto overflow-y-hidden border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white">
+          <div className="p-4 border-b border-gray-200 dark:border-navy-700 flex justify-end items-center">
+            <h1 className="text-lg font-semibold text-navy-800 dark:text-white w-full">GRAFIK MONITORING PICA</h1>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+            <div className="mr-4">
+              <Select
+                options={regionalOptions}
+                onChange={handleIsRegionalSelectChange}
+                className=""
+                instanceId={instanceId}
+                placeholder="Pilih Regional"
+                isSearchable={true}
+                styles={customStyles}
+                value={watch("regional")}
+                defaultValue={regionalOptions.find((option) => option.value === "regional1")}
+                menuPortalTarget={document.body}
+                menuPlacement="auto"
+                {...register("regional", { required: true })}
+              />
+            </div>
+            <div className="mr-4">
+              <Select
+                options={kebunOptions}
+                onChange={handleIsKebunSelectChange}
+                className=""
+                instanceId={instanceId}
+                placeholder="Pilih Kebun"
+                isSearchable={true}
+                styles={customStyles}
+                value={watch("kebun")}
+                defaultValue={kebunOptions.find((option) => option.value === "kebun1")}
+                menuPortalTarget={document.body}
+                menuPlacement="auto"
+                {...register("kebun", { required: true })}
+              />
+            </div>
+            <div className="mr-4">
+              <Select
+                options={tahunOptions}
+                onChange={handleIsTahunSelectChange}
+                className=""
+                instanceId={instanceId}
+                placeholder="Pilih Tahun"
+                isSearchable={true}
+                styles={customStyles}
+                value={watch("tahun")}
+                defaultValue={tahunOptions.find((option) => option.value === "2022")}
+                menuPortalTarget={document.body}
+                menuPlacement="auto"
+                {...register("tahun", { required: true })}
+              />
+            </div>
+            <div className="mr-4">
+              <Select
+                options={bulanOptions}
+                onChange={handleIsKebunSelectChange}
+                className=""
+                instanceId={instanceId}
+                placeholder="Pilih Bulan"
+                isSearchable={true}
+                styles={customStyles}
+                value={watch("bulan")}
+                defaultValue={bulanOptions.find((option) => option.value === "january")}
+                menuPortalTarget={document.body}
+                menuPlacement="auto"
+                {...register("bulan", { required: true })}
+              />
+            </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4">
-          <div className="bg-black text-white p-4 rounded-lg shadow-md" style={{ backgroundColor: 'black', color: 'white' }}>
-            <h2 className="text-lg font-bold">HITAM</h2>
-            <p className="text-2xl">{hitam}</p>
-
-          </div>
-          <div className="bg-yellow-500 text-black p-4 rounded-lg shadow-md">
-            <h2 className="text-lg font-bold">EMAS</h2>
-            <p className="text-2xl">{emas}</p>
-          </div>
-          <div className="bg-green-500 text-white p-4 rounded-lg shadow-md">       
-            <h2 className="text-lg font-bold">HIJAU</h2>
-            <p className="text-2xl">
-              {hijau}
-            </p></div>
-          <div className="bg-yellow-300 text-black p-4 rounded-lg shadow-md">       
-            <h2 className="text-lg font-bold">KUNING</h2>
-            <p className="text-2xl">{kuning}</p></div>
-          <div className="bg-red-700 text-white p-4 rounded-lg shadow-md">       
-            <h2 className="text-lg font-bold">MERAH</h2>
-            <p className="text-2xl">{merah}</p></div>
-        </div>
-        <div className="mt-3 grid lg:grid-cols-2 gap-5 sm:grid sm:grid-cols-12">
-          <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Renta</h3>
-            <div className="flex">
-              <PieChartDashboard />
-            </div>
-          </div>
-          <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Tua</h3>
-            <div className="flex">
-            <PieChartDashboard />
-
-            </div>
-          </div>
-          <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Dewasa</h3>
-            <div className="flex">
-            <PieChartDashboard />
-
-            </div>
-          </div>
-          <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Muda</h3>
-            <div className="flex">
-            <PieChartDashboard />
-
-            </div>
-          </div>
-
-
-        </div>
-
-
       </div>
-    </>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="relative overflow-x-auto overflow-y-hidden border-black rounded-lg shadow-lg border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+          <h3 className="text-center font-bold underline decoration-black">Hitam</h3>
+          <h1 className="text-6xl text-center font-bold">{hitam}</h1>
+        </div>
+        <div className="relative overflow-x-auto overflow-y-hidden border-orange-300 rounded-lg shadow-lg dark:border-orange-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+          <h3 className="text-center font-bold underline decoration-orange-300">Emas</h3>
+          <h1 className="text-6xl text-center font-bold">{emas}</h1>
+        </div>
+        <div className="relative overflow-x-auto overflow-y-hidden border-green-500 rounded-lg shadow-lg border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+          <h3 className="text-center font-bold underline decoration-green-500">Hijau</h3>
+          <h1 className="text-6xl text-center font-bold">{hijau}</h1>
+        </div>
+        <div className="relative overflow-x-auto overflow-y-hidden border-yellow-500 rounded-lg shadow-lg dark:border-yellow-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+          <h3 className="text-center font-bold underline decoration-yellow-500">Kuning</h3>
+          <h1 className="text-6xl text-center font-bold">{kuning}</h1>
+        </div>
+        <div className="relative overflow-x-auto overflow-y-hidden border-red-700 rounded-lg shadow-lg dark:border-red-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+          <h3 className="text-center font-bold underline decoration-red-700">Merah</h3>
+          <h1 className="text-6xl text-center font-bold">{merah}</h1>
+        </div>
+      </div>
+
+      <div className="mt-3 grid lg:grid-cols-2 gap-5 sm:grid sm:grid-cols-12">
+
+
+        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Tua</h3>
+          <div className="flex">
+            <PieChartDashboard nameData='Tua' downloadJsonData={pieDataTua.downloadJsonTua} builderJsonData={pieDataTua.builderJsonTua} />
+          </div>
+        </div>
+        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Remaja</h3>
+          <div className="flex">
+            <PieChartDashboard nameData='Remaja' downloadJsonData={pieDataRemaja.downloadJsonRemaja} builderJsonData={pieDataRemaja.builderJsonRemaja} />
+          </div>
+        </div>
+        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Renta</h3>
+          <div className="flex">
+            <PieChartDashboard nameData='Renta' downloadJsonData={pieDataRenta.downloadJsonRenta} builderJsonData={pieDataRenta.builderJsonRenta} />
+          </div>
+        </div>
+        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Muda</h3>
+          <div className="flex">
+            <PieChartDashboard nameData='Muda' downloadJsonData={pieDataMuda.downloadJsonMuda} builderJsonData={pieDataMuda.builderJsonMuda} />
+          </div>
+        </div>
+        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Dewasa</h3>
+          <div className="flex">
+            <PieChartDashboard nameData='Dewasa' downloadJsonData={pieDataDewasa.downloadJsonDewasa} builderJsonData={pieDataDewasa.builderJsonDewasa} />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
