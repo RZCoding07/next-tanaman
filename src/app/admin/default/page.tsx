@@ -1,31 +1,13 @@
 'use client';
-import { IoMdHome } from 'react-icons/io';
-import { IoDocuments } from 'react-icons/io5';
-import { MdBarChart, MdDashboard } from 'react-icons/md';
 import axios from "axios";
-import { FaUserGroup } from "react-icons/fa6";
+
+import { ReportType } from "types/report";
 import React, { useEffect, useRef, useId, useState } from "react";
-import { useController, useForm } from "react-hook-form";
 import Select from 'react-select';
-import * as echarts from 'echarts';
 
-
-import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart } from 'echarts/charts';
-import { TooltipComponent, TitleComponent, GridComponent } from 'echarts/components';
-
-// Register necessary components
-// echarts.use([TooltipComponent, TitleComponent, GridComponent, BarChart, PieChart, CanvasRenderer]);
-
-
-import NavLink from "components/link/NavLink";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { NumericFormat } from "react-number-format";
 import { isWindowAvailable } from "utils/navigation";
 import PieChartDashboard from 'components/charts/PieChartDashboard';
 
-import PieChart from 'components/charts/PieChart';
 
 import cookie from "js-cookie";
 import { Tokens } from "types/token";
@@ -119,7 +101,7 @@ const Dashboard = () => {
 
 	// GET TAHUN DATA
 	const [dataReport, setDataReport] = useState<any>([]);
-	const [dataAllReport, setAllDataReport] = useState<any>([]);
+	// const [dataAllReport, setAllDataReport] = useState<any>([]);
 	const [bulan, setBulan] = useState<any>(1);
 	const [tahun, setTahun] = useState<any>(2021);
 	const [emas, setEmas] = useState<any>(0);
@@ -178,7 +160,7 @@ const Dashboard = () => {
 
 			setDataReport(mappedData);
 
-			setAllDataReport(data.payload);
+			// setAllDataReport(data.payload);
 
 			setEmas(data.payload[0].emas);
 			setHitam(data.payload[0].hitam);
