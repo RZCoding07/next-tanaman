@@ -146,7 +146,6 @@ const ModalIdentifikasiMasalah = ({ item, onClose }) => {
                     </label>
                     <Select
                         options={roleOptions}
-                        onChange={handleRoleSelectChange}
                         styles={customStylesSelect}
                         placeholder="Pilih Role"
                         classNamePrefix="dark:bg-navy-900 dark:text-white dark:border-navy-800"
