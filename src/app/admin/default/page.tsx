@@ -2,8 +2,9 @@
 import { IoMdHome } from 'react-icons/io';
 import { IoDocuments } from 'react-icons/io5';
 import { MdBarChart, MdDashboard } from 'react-icons/md';
+import axios from "axios";
 import { FaUserGroup } from "react-icons/fa6";
-import React, { useEffect, useRef, useId } from "react";
+import React, { useEffect, useRef, useId, useState } from "react";
 import { useController, useForm } from "react-hook-form";
 import Select from 'react-select';
 import * as echarts from 'echarts';
@@ -29,299 +30,298 @@ import { Tokens } from "types/token";
 
 const Dashboard = () => {
 
-  const [darkmode, setDarkmode] = React.useState(
-    document.body.classList.contains('dark')
-  );
+	const [darkmode, setDarkmode] = useState(
+		document.body.classList.contains('dark')
+	);
 
-  // Mengambil semua class dari elemen body
-  const bodyClasses = document.body.classList;
+	// Mengambil semua class dari elemen body
+	const bodyClasses = document.body.classList;
 
-  // Mengambil class pertama dari elemen body (jika ada)
-  const firstClass = document.body.classList[0];
+	// Mengambil class pertama dari elemen body (jika ada)
+	const firstClass = document.body.classList[0];
 
-  // Mengecek apakah elemen body memiliki class 'dark'
-  let hasDarkClass = document.body.classList.contains('dark');
+	// Mengecek apakah elemen body memiliki class 'dark'
+	let hasDarkClass = document.body.classList.contains('dark');
 
-  // Menambahkan class 'dark' ke elemen body jika belum ada
+	// Menambahkan class 'dark' ke elemen body jika belum ada
 
-  let color = "dark";
+	let color = "dark";
 
-  const handleDarkmode = () => {
-    if (hasDarkClass) {
-      document.body.classList.remove('dark');
+	const handleDarkmode = () => {
+		if (hasDarkClass) {
+			document.body.classList.remove('dark');
 
-      color = "light";
+			color = "light";
 
-      setDarkmode(false);
-    } else {
-      color = "dark";
-      document.body.classList.add('dark');
-      setDarkmode(true);
-    }
-  };
+			setDarkmode(false);
+		} else {
+			color = "dark";
+			document.body.classList.add('dark');
+			setDarkmode(true);
+		}
+	};
 
-  useEffect(() => {
-    handleDarkmode();
-
-
-  }, []);
+	useEffect(() => {
+		handleDarkmode();
 
 
-  if (isWindowAvailable()) {
-    document.title = 'Dashboard';
-  }
+	}, []);
 
-  const customStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      backgroundColor: '#F9FAFB', // bg-gray-50
-      borderColor: state.isFocused ? '#38A169' : '#38A169', // border-green-600
-      color: '#1A202C', // text-gray-900
-      borderRadius: '100px', // rounded-full
-      paddingLeft: '2.5rem', // pl-10
-      padding: '0.1rem', // p-2.5
-      boxShadow: state.isFocused ? '0 0 0 2px rgba(56, 161, 105, 0.5)' : null, // focus:ring-2 focus:ring-opacity-50
-      '&:hover': {
-        borderColor: '#38A169',
-      },
-      '&:active': {
-        outline: 'none',
-      },
-      '&:focus': {
-        outline: 'none',
-      },
-    }),
-    placeholder: (provided) => ({
-      ...provided,
-      color: '#A0AEC0', // text-gray-500
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      color: '#1A202C', // text-gray-900
-    }),
-    menuPortal: (provided) => ({
-      ...provided,
-      zIndex: 9999,
-    }),
-  };
 
-  type Data = {
-    report: {
-      value: string;
-      label: string;
-    }
-  };
+	if (isWindowAvailable()) {
+		document.title = 'Dashboard';
+	}
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+	const customStyles = {
+		control: (provided, state) => ({
+			...provided,
+			backgroundColor: '#F9FAFB', // bg-gray-50
+			borderColor: state.isFocused ? '#38A169' : '#38A169', // border-green-600
+			color: '#1A202C', // text-gray-900
+			borderRadius: '100px', // rounded-full
+			paddingLeft: '2.5rem', // pl-10
+			padding: '0.1rem', // p-2.5
+			boxShadow: state.isFocused ? '0 0 0 2px rgba(56, 161, 105, 0.5)' : null, // focus:ring-2 focus:ring-opacity-50
+			'&:hover': {
+				borderColor: '#38A169',
+			},
+			'&:active': {
+				outline: 'none',
+			},
+			'&:focus': {
+				outline: 'none',
+			},
+		}),
+		placeholder: (provided) => ({
+			...provided,
+			color: '#A0AEC0', // text-gray-500
+		}),
+		singleValue: (provided) => ({
+			...provided,
+			color: '#1A202C', // text-gray-900
+		}),
+		menuPortal: (provided) => ({
+			...provided,
+			zIndex: 9999,
+		}),
+	};
 
-  // GET TAHUN DATA
-  const [dataReport, setDataReport] = React.useState<any>([]);
-  const [dataAllReport, setAllDataReport] = React.useState<any>([]);
-  const [bulan, setBulan] = React.useState<any>(1);
-  const [tahun, setTahun] = React.useState<any>(2021);
-  const [emas, setEmas] = React.useState<any>(0);
-  const [hitam, setHitam] = React.useState<any>(0);
-  const [hijau, setHijau] = React.useState<any>(0);
-  const [kuning, setKuning] = React.useState<any>(0);
-  const [merah, setMerah] = React.useState<any>(0);
-  const [tua, setTua] = React.useState<any>(0);
-  const [muda, setMuda] = React.useState<any>(0);
-  const [remaja, setRemaja] = React.useState<any>(0);
-  const [renta, setRenta] = React.useState<any>(0);
-  const [dewasa, setDewasa] = React.useState<any>(0);
+	type Data = {
+		report: {
+			value: string;
+			label: string;
+		}
+	};
 
+
+	// GET TAHUN DATA
+	const [dataReport, setDataReport] = useState<any>([]);
+	const [dataAllReport, setAllDataReport] = useState<any>([]);
+	const [bulan, setBulan] = useState<any>(1);
+	const [tahun, setTahun] = useState<any>(2021);
+	const [emas, setEmas] = useState<any>(0);
+	const [hitam, setHitam] = useState<any>(0);
+	const [hijau, setHijau] = useState<any>(0);
+	const [kuning, setKuning] = useState<any>(0);
+	const [merah, setMerah] = useState<any>(0);
+	const [tua, setTua] = useState<any>(0);
+	const [muda, setMuda] = useState<any>(0);
+	const [remaja, setRemaja] = useState<any>(0);
+	const [renta, setRenta] = useState<any>(0);
+	const [dewasa, setDewasa] = useState<any>(0);
 
 
 
 
-  // Mengambil data kebun dari API
-  const getAllReport = async () => {
-    const loginData = cookie.get("token");
-    const tokenData: Tokens = JSON.parse(loginData || "{}");
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/report`, {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${tokenData.payload.access_token}`,
-      },
-    });
-    const data = await res.json();
-    if (data.status_code === 200) {
-      // console.log(data.data);
-      // set mappedData to value label
+	// Mengambil data kebun dari API
+	const getAllReport = async () => {
+		const loginData = cookie.get("token");
+		const tokenData: Tokens = JSON.parse(loginData || "{}");
 
-      let bulanOpt = [
-        { value: '1', label: 'Januari' },
-        { value: '2', label: 'Februari' },
-        { value: '3', label: 'Maret' },
-        { value: '4', label: 'April' },
-        { value: '5', label: 'Mei' },
-        { value: '6', label: 'Juni' },
-        { value: '7', label: 'Juli' },
-        { value: '8', label: 'Agustus' },
-        { value: '9', label: 'September' },
-        { value: '10', label: 'Oktober' },
-        { value: '11', label: 'November' },
-        { value: '12', label: 'Desember' },
-      ];
-      const mappedData = data.payload.map((item: any) => {
-        return {
-          value: item.id,
-          label: bulanOpt[item.bulan - 1].label + " " + item.tahun
-        };
-      });
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/report`, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${tokenData.payload.access_token}`,
+			},
+		});
+		const data = await res.json();
+		if (data.status_code === 200) {
+			// console.log(data.data);
+			// set mappedData to value label
 
-      setDataReport(mappedData);
+			let bulanOpt = [
+				{ value: '1', label: 'Januari' },
+				{ value: '2', label: 'Februari' },
+				{ value: '3', label: 'Maret' },
+				{ value: '4', label: 'April' },
+				{ value: '5', label: 'Mei' },
+				{ value: '6', label: 'Juni' },
+				{ value: '7', label: 'Juli' },
+				{ value: '8', label: 'Agustus' },
+				{ value: '9', label: 'September' },
+				{ value: '10', label: 'Oktober' },
+				{ value: '11', label: 'November' },
+				{ value: '12', label: 'Desember' },
+			];
+			const mappedData = data.payload.map((item: any) => {
+				return {
+					value: item.id,
+					label: bulanOpt[item.bulan - 1].label + " " + item.tahun
+				};
+			});
 
-      setAllDataReport(data.payload);
+			setDataReport(mappedData);
 
-      setEmas(data.payload[0].emas);
-      setHitam(data.payload[0].hitam);
-      setHijau(data.payload[0].hijau);
-      setKuning(data.payload[0].kuning);
-      setMerah(data.payload[0].merah);
-      setTua(data.payload[0].tua);
-      setMuda(data.payload[0].muda);
-      setRemaja(data.payload[0].remaja);
-      setRenta(data.payload[0].renta);
-      setDewasa(data.payload[0].dewasa);
-      setBulan(data.payload[0].bulan);
-      setTahun(data.payload[0].tahun);
+			setAllDataReport(data.payload);
 
-      console.log(data.payload);
+			setEmas(data.payload[0].emas);
+			setHitam(data.payload[0].hitam);
+			setHijau(data.payload[0].hijau);
+			setKuning(data.payload[0].kuning);
+			setMerah(data.payload[0].merah);
+			setTua(data.payload[0].tua);
+			setMuda(data.payload[0].muda);
+			setRemaja(data.payload[0].remaja);
+			setRenta(data.payload[0].renta);
+			setDewasa(data.payload[0].dewasa);
+			setBulan(data.payload[0].bulan);
+			setTahun(data.payload[0].tahun);
 
-    } else {
-      // handle error
-      console.error("Failed to fetch data");
-    }
-  };
+			console.log(data.payload);
 
-
-  const fetchFilteredData = async () => {
-    try {
-      const loginData = cookie.get("token");
-      const tokenData = JSON.parse(loginData || "{}");
-
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/grafik/filter?tahun=2024&bulan=1&rpc=&kebun=&afd=`, {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenData.payload.access_token}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const resultData = await res.json();
-      return resultData;
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-      throw error;
-    }
-  };
-
-  const processPieData = (setPieData: any, data: any, category: string, stateName: string) => {
-    if (data.result && data.result[category]) {
-      const categoryData = data.result[category];
-
-      const builderJson = {
-        all: categoryData.hitam + categoryData.emas + categoryData.hijau + categoryData.kuning + categoryData.merah,
-        charts: {
-          hitam: categoryData.hitam,
-          emas: categoryData.emas,
-          hijau: categoryData.hijau,
-          kuning: categoryData.kuning,
-          merah: categoryData.merah,
-        },
-      };
-
-      const downloadJson = {
-        hitam: categoryData.hitam,
-        emas: categoryData.emas,
-        hijau: categoryData.hijau,
-        kuning: categoryData.kuning,
-        merah: categoryData.merah,
-      };
-
-      setPieData({ [`builderJson${stateName}`]: builderJson, [`downloadJson${stateName}`]: downloadJson });
-    } else {
-      console.error(`Failed to fetch data for ${category}: `, data.message);
-    }
-  };
+		} else {
+			// handle error
+			console.error("Failed to fetch data");
+		}
+	};
 
 
+	const fetchFilteredData = async () => {
+		try {
+			const loginData = cookie.get("token");
+			const tokenData = JSON.parse(loginData || "{}");
+
+			const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/grafik/filter?tahun=2024&bulan=1&rpc=&kebun=&afd=`, {
+				method: "GET",
+				headers: {
+					accept: "application/json",
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${tokenData.payload.access_token}`,
+				},
+			});
+
+			if (!res.ok) {
+				throw new Error("Network response was not ok");
+			}
+
+			const resultData = await res.json();
+			return resultData;
+		} catch (error) {
+			console.error("Failed to fetch data:", error);
+			throw error;
+		}
+	};
+
+	const processPieData = (setPieData: any, data: any, category: string, stateName: string) => {
+		if (data.result && data.result[category]) {
+			const categoryData = data.result[category];
+
+			const builderJson = {
+				all: categoryData.hitam + categoryData.emas + categoryData.hijau + categoryData.kuning + categoryData.merah,
+				charts: {
+					hitam: categoryData.hitam,
+					emas: categoryData.emas,
+					hijau: categoryData.hijau,
+					kuning: categoryData.kuning,
+					merah: categoryData.merah,
+				},
+			};
+
+			const downloadJson = {
+				hitam: categoryData.hitam,
+				emas: categoryData.emas,
+				hijau: categoryData.hijau,
+				kuning: categoryData.kuning,
+				merah: categoryData.merah,
+			};
+
+			setPieData({ [`builderJson${stateName}`]: builderJson, [`downloadJson${stateName}`]: downloadJson });
+		} else {
+			console.error(`Failed to fetch data for ${category}: `, data.message);
+		}
+	};
 
 
-  const instanceId = useId();
-
-  const [pieDataTua, setPieDataTua] = React.useState<any>({
-    builderJsonTua: null,
-    downloadJsonTua: null,
-  });
-  const [pieDataRemaja, setPieDataRemaja] = React.useState<any>({
-    builderJsonRemaja: null,
-    downloadJsonRemaja: null,
-  });
-  const [pieDataRenta, setPieDataRenta] = React.useState<any>({
-    builderJsonRenta: null,
-    downloadJsonRenta: null,
-  });
-  const [pieDataMuda, setPieDataMuda] = React.useState<any>({
-    builderJsonMuda: null,
-    downloadJsonMuda: null,
-  });
-  const [pieDataDewasa, setPieDataDewasa] = React.useState<any>({
-    builderJsonDewasa: null,
-    downloadJsonDewasa: null,
-  });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const resultData = await fetchFilteredData();
-        processPieData(setPieDataTua, resultData, 'tua', 'Tua');
-        processPieData(setPieDataRemaja, resultData, 'remaja', 'Remaja');
-        processPieData(setPieDataRenta, resultData, 'renta', 'Renta');
-        processPieData(setPieDataMuda, resultData, 'muda', 'Muda');
-        processPieData(setPieDataDewasa, resultData, 'dewasa', 'Dewasa');
-      } catch (error) {
-        console.error("Error fetching and processing data", error);
-      }
-    };
-
-    fetchData();
-
-    getAllReport();
-  }, []);
 
 
-  type Gata = {
-    keterangan: {
-      value: string;
-      label: string;
-    },
-    regional: {
-      value: string;
-      label: string;
-    },
-    kebun: {
-      value: string;
-      label: string;
-    },
-    tahun: {
-      value: string;
-      label: string;
-    },
-    bulan: {
-      value: string;
-      label: string;
-    };
-  };
+	const instanceId = useId();
+
+	const [pieDataTua, setPieDataTua] = useState<any>({
+		builderJsonTua: null,
+		downloadJsonTua: null,
+	});
+	const [pieDataRemaja, setPieDataRemaja] = useState<any>({
+		builderJsonRemaja: null,
+		downloadJsonRemaja: null,
+	});
+	const [pieDataRenta, setPieDataRenta] = useState<any>({
+		builderJsonRenta: null,
+		downloadJsonRenta: null,
+	});
+	const [pieDataMuda, setPieDataMuda] = useState<any>({
+		builderJsonMuda: null,
+		downloadJsonMuda: null,
+	});
+	const [pieDataDewasa, setPieDataDewasa] = useState<any>({
+		builderJsonDewasa: null,
+		downloadJsonDewasa: null,
+	});
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const resultData = await fetchFilteredData();
+				processPieData(setPieDataTua, resultData, 'tua', 'Tua');
+				processPieData(setPieDataRemaja, resultData, 'remaja', 'Remaja');
+				processPieData(setPieDataRenta, resultData, 'renta', 'Renta');
+				processPieData(setPieDataMuda, resultData, 'muda', 'Muda');
+				processPieData(setPieDataDewasa, resultData, 'dewasa', 'Dewasa');
+			} catch (error) {
+				console.error("Error fetching and processing data", error);
+			}
+		};
+
+		fetchData();
+
+		getAllReport();
+	}, []);
+
+
+	type Gata = {
+		keterangan: {
+			value: string;
+			label: string;
+		},
+		regional: {
+			value: string;
+			label: string;
+		},
+		kebun: {
+			value: string;
+			label: string;
+		},
+		tahun: {
+			value: string;
+			label: string;
+		},
+		bulan: {
+			value: string;
+			label: string;
+		};
+	};
 
   //
 
@@ -398,8 +398,8 @@ const Dashboard = () => {
     },
   });
 
-  return (
-    <div className="w-full min-h-screen">
+	return (
+		<div className="w-full min-h-screen">
 
       <div className="mt-10 mb-5">
         <div className="relative overflow-x-auto overflow-y-hidden border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-800 dark:text-white">
@@ -439,7 +439,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="mt-3 grid lg:grid-cols-2 gap-5 sm:grid sm:grid-cols-12">
+			<div className="mt-3 grid lg:grid-cols-2 gap-5 sm:grid sm:grid-cols-12">
 
 
         <div className="bg-white dark:bg-navy-800 p-4 rounded-lg shadow-md">
