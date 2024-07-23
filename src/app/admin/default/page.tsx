@@ -14,7 +14,7 @@ import { BarChart } from 'echarts/charts';
 import { TooltipComponent, TitleComponent, GridComponent } from 'echarts/components';
 
 // Register necessary components
-echarts.use([TooltipComponent, TitleComponent, GridComponent, BarChart, PieChart, CanvasRenderer]);
+// echarts.use([TooltipComponent, TitleComponent, GridComponent, BarChart, PieChart, CanvasRenderer]);
 
 
 import NavLink from "components/link/NavLink";
