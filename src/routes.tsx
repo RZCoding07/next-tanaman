@@ -26,6 +26,8 @@ import { PiChartScatterDuotone } from "react-icons/pi";
 
 // why 
 import { TbAdjustmentsQuestion } from "react-icons/tb";
+import { GiFertilizerBag } from "react-icons/gi";
+
 
 const routes = [
   {
@@ -39,6 +41,12 @@ const routes = [
     layout: '/admin',
     path: 'grafik',
     icon: <PiChartScatterDuotone className="h-6 w-6" />,
+  },
+  {
+    name: 'Pupuk',
+    layout: '/admin',
+    path: 'pupuk',
+    icon: <GiFertilizerBag className="h-6 w-6" />,
   },
   {
     name: 'Identifikasi Masalah',
