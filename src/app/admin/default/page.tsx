@@ -50,7 +50,9 @@ const Dashboard = () => {
 		handleDarkmode();
 
 
-	}, []);
+	}, [
+		darkmode
+	]);
 
 
 	if (isWindowAvailable()) {
