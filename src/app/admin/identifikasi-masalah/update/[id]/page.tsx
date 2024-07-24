@@ -1,7 +1,7 @@
 "use client";
 import cookie from "js-cookie";
 import { Tokens } from "types/token";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import NavLink from "components/link/NavLink";
 import Select from "react-select";
 import { useRouter } from "next/navigation";
@@ -53,7 +53,7 @@ const IdentifikasiMasalahForm = ({ params }: { params: { id: string } }) => {
     const [id, setId] = useState("");
     const [luas, setLuas] = useState("");
 
-    const getDataUser = async () => {
+    const getDataUser = useCallback(async () => {
         const loginData = cookie.get("token");
         const tokenData: Tokens = JSON.parse(loginData || "{}");
 
@@ -75,8 +75,11 @@ const IdentifikasiMasalahForm = ({ params }: { params: { id: string } }) => {
             setBlok(kuadran.no_blok);  // Updated to match the correct property name
             setLuas(kuadran.luas);
         }
-
-    };
+    }, [
+        apiUrl,
+        params.id,
+        cookie.get("token"),
+    ]);
 
     // testing delete later
     const [selectedAfd, setSelectedAfd] = useState(null);
@@ -93,7 +96,7 @@ const IdentifikasiMasalahForm = ({ params }: { params: { id: string } }) => {
 
     useEffect(() => {
         getDataUser();
-    }, []);
+    }, [getDataUser]);
 
     const isDarkMode = typeof window !== "undefined" && window.localStorage.getItem("darkmode") === "true";
     const customStylesSelect = getCustomStylesSelect(isDarkMode);
