@@ -254,7 +254,6 @@ const CreateUser = () => {
             <div className="flex justify-start mt-5">
               <button
                 type="button"
-                onClick={onClose}
                 className="text-white bg-red-600 hover:bg-red-800"
               >
                 Cancel

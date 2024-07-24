@@ -1,6 +1,6 @@
 {
-  "name": "ev4hris",
-  "version": "2.0.0",
+  "name": "pica-tanaman",
+  "version": "1.0.0beta",
   "private": true,
   "dependencies": {
     "@chakra-ui/hooks": "^2.1.4",
