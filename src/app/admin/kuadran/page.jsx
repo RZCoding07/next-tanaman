@@ -11,7 +11,6 @@ import { Tokens } from "types/token";
 import { KuadranType } from "types/kuadran";
 import { ReportType } from "types/report";
 import axios from "axios";
-import { Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Pagination } from "@nextui-org/react";
 
 const KuadranList = (props) => {
   if (isWindowAvailable()) document.title = "Kuadran List";
