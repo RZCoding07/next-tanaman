@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import cookie from "js-cookie";
 import PageLoading from "components/loading/LoadingSkeleton";
@@ -75,7 +75,7 @@ const IdentifikasiMasalahList = () => {
     const [kebunOptions, setKebunOptions] = useState<{ value: string; label: string }[]>([]);
     const [afdOptions, setAfdOptions] = useState<{ value: string; label: string }[]>([]);
 
-    const fetchData = async (newCursor) => {
+    const fetchData = useCallback(async (newCursor) => {
         setIsLoading(true);
         try {
             const loginData = cookie.get("token");
@@ -111,7 +111,7 @@ const IdentifikasiMasalahList = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [apiUrl, cursor, searchInput, sortBy, sortDirection, filters, limitPerPage]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchInput(event.target.value);
@@ -175,7 +175,7 @@ const IdentifikasiMasalahList = () => {
 
 
 
-    const fetchTahunOptions = async () => {
+    const fetchTahunOptions = useCallback(async () => {
         try {
             const response = await axios.get(`${apiUrl}/tahun`);
             const tahunData = response.data.map((item: { tahun: number }) => ({
@@ -186,9 +186,11 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching tahun options:", error);
         }
-    };
+    }, [
+        apiUrl,
+    ]);
 
-    const fetchBulanOptions = async (tahun: string) => {
+    const fetchBulanOptions = useCallback(async (tahun: string) => {
         try {
             const response = await axios.get(`${apiUrl}/bulan/${tahun}`);
             const data = response.data;
@@ -200,9 +202,11 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching bulan options:", error);
         }
-    };
+    }, [
+        apiUrl,
+    ]);
 
-    const fetchRpcOptions = async (tahun: string, bulan: string) => {
+    const fetchRpcOptions = useCallback(async (tahun: string, bulan: string) => {
         try {
             const response = await axios.get(`${apiUrl}/rpc/${tahun}/${bulan}`);
             const data = response.data;
@@ -214,9 +218,12 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching rpc options:", error);
         }
-    };
+    }, [
+        apiUrl,
+    ]);
 
-    const fetchKebunOptions = async (tahun: string, bulan: string, rpc: string) => {
+
+    const fetchKebunOptions = useCallback(async (tahun: string, bulan: string, rpc: string) => {
         try {
             const response = await axios.get(`${apiUrl}/kebun/${tahun}/${bulan}/${rpc}`);
             const data = response.data;
@@ -228,9 +235,11 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching kebun options:", error);
         }
-    };
+    }, [
+        apiUrl
+    ]);
 
-    const fetchAfdOptions = async (tahun: string, bulan: string, rpc: string, kebun: string) => {
+    const fetchAfdOptions = useCallback(async (tahun: string, bulan: string, rpc: string, kebun: string) => {
         try {
             const response = await axios.get(`${apiUrl}/afd/${tahun}/${bulan}/${rpc}/${kebun}`);
             const data = response.data;
@@ -242,7 +251,9 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching afd options:", error);
         }
-    };
+    }, [
+        apiUrl
+    ]);
 
 
     const renderOptions = (options: { value: string, label: string }[]) => {
@@ -252,11 +263,14 @@ const IdentifikasiMasalahList = () => {
     };
     useEffect(() => {
         fetchData(cursor);
-    }, [cursor, searchInput, sortBy, sortDirection, filters]);
+    }, [cursor, searchInput, sortBy, sortDirection, filters, fetchData, limitPerPage]);
 
     useEffect(() => {
         fetchTahunOptions();
-    }, []);
+    }, [
+        fetchTahunOptions, fetchBulanOptions, fetchRpcOptions, fetchKebunOptions, fetchAfdOptions
+
+    ]);
 
     return (
         <>

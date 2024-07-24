@@ -1,6 +1,6 @@
 'use client';
 import axios from "axios";
-import React, { useEffect, useRef, useId, useState } from "react";
+import React, { useEffect, useRef, useId, useState, useCallback } from "react";
 
 import { ReportType } from "types/report";
 import Select from 'react-select';
@@ -15,9 +15,6 @@ import { Tokens } from "types/token";
 
 const Dashboard = () => {
 
-	const [darkmode, setDarkmode] = useState(
-		document.body.classList.contains('dark')
-	);
 
 	// Mengambil semua class dari elemen body
 	const bodyClasses = document.body.classList;
@@ -32,27 +29,23 @@ const Dashboard = () => {
 
 	let color = "dark";
 
-	const handleDarkmode = () => {
-		if (hasDarkClass) {
-			document.body.classList.remove('dark');
 
-			color = "light";
+	const [darkmode, setDarkmode] = useState(
+		document.body.classList.contains('dark')
+	);
 
-			setDarkmode(false);
-		} else {
-			color = "dark";
-			document.body.classList.add('dark');
-			setDarkmode(true);
-		}
-	};
+	// Toggle dark mode
+	const handleDarkmode = useCallback(() => {
+		setDarkmode(prevDarkmode => {
+			const newDarkmode = !prevDarkmode;
+			document.body.classList.toggle('dark', newDarkmode);
+			return newDarkmode;
+		});
+	}, []);
 
 	useEffect(() => {
-		handleDarkmode();
-
-
-	}, [
-		darkmode
-	]);
+		document.body.classList.toggle('dark', darkmode);
+	}, [darkmode]);
 
 
 	if (isWindowAvailable()) {
@@ -336,7 +329,7 @@ const Dashboard = () => {
 	const [regionalOptions, setRpcOptions] = useState<{ value: string; label: string }[]>([]);
 	const [kebunOptions, setKebunOptions] = useState<{ value: string; label: string }[]>([]);
 	const [afdOptions, setAfdOptions] = useState<{ value: string; label: string }[]>([]);
-	const fetchData = async (newCursor) => {
+	const fetchData = useCallback(async (newCursor) => {
 		try {
 			const loginData = cookie.get("token");
 			const tokenData = JSON.parse(loginData || "{}");
@@ -371,7 +364,7 @@ const Dashboard = () => {
 		} finally {
 			setIsLoading(false);
 		}
-	};
+	}, [apiUrl, cursor, searchInput, sortBy, sortDirection, filters.selectedTahun, filters.selectedBulan, filters.selectedRpc, filters.selectedKebun, filters.selectedAfd, limitPerPage]);
 
 	const handleFilterChange = (selectedOption, filterKey) => {
 		setFilters(prevFilters => ({
@@ -392,7 +385,7 @@ const Dashboard = () => {
 		}
 	};
 
-	const fetchTahunOptions = async () => {
+	const fetchTahunOptions = useCallback(async () => {
 		try {
 			const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tahun`);
 			const tahunData = response.data.map((item: { tahun: number }) => ({
@@ -403,7 +396,7 @@ const Dashboard = () => {
 		} catch (error) {
 			console.error("Error fetching tahun options:", error);
 		}
-	};
+	}, []);
 
 	const fetchBulanOptions = async (tahun) => {
 		const monthNames = [
@@ -470,11 +463,11 @@ const Dashboard = () => {
 
 	useEffect(() => {
 		fetchData(cursor);
-	}, [cursor, searchInput, sortBy, sortDirection, filters]);
+	}, [cursor, searchInput, sortBy, sortDirection, filters, fetchData]);
 
 	useEffect(() => {
 		fetchTahunOptions();
-	}, []);
+	}, [fetchTahunOptions]);
 
 
 
