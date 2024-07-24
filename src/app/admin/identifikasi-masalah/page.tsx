@@ -178,7 +178,7 @@ const IdentifikasiMasalahList = () => {
 
     const fetchTahunOptions = async () => {
         try {
-            const response = await axios.get("http://localhost:5000/tahun");
+            const response = await axios.get(`${apiUrl}/tahun`);
             const tahunData = response.data.map((item: { tahun: number }) => ({
                 value: item.tahun.toString(),
                 label: item.tahun.toString(),
@@ -191,7 +191,7 @@ const IdentifikasiMasalahList = () => {
 
     const fetchBulanOptions = async (tahun: string) => {
         try {
-            const response = await axios.get(`http://localhost:5000/bulan/${tahun}`);
+            const response = await axios.get(`${apiUrl}/bulan/${tahun}`);
             const data = response.data;
             const bulanOptions = data.map((item: { bulan: string }) => ({
                 value: item.bulan,
@@ -205,7 +205,7 @@ const IdentifikasiMasalahList = () => {
 
     const fetchRpcOptions = async (tahun: string, bulan: string) => {
         try {
-            const response = await axios.get(`http://localhost:5000/rpc/${tahun}/${bulan}`);
+            const response = await axios.get(`${apiUrl}/rpc/${tahun}/${bulan}`);
             const data = response.data;
             const regionalOptions = data.map((item: { rpc: string }) => ({
                 value: item.rpc,
@@ -219,7 +219,7 @@ const IdentifikasiMasalahList = () => {
 
     const fetchKebunOptions = async (tahun: string, bulan: string, rpc: string) => {
         try {
-            const response = await axios.get(`http://localhost:5000/kebun/${tahun}/${bulan}/${rpc}`);
+            const response = await axios.get(`${apiUrl}/kebun/${tahun}/${bulan}/${rpc}`);
             const data = response.data;
             const kebunOptions = data.map((item: { kebun: string }) => ({
                 value: item.kebun,
@@ -233,7 +233,7 @@ const IdentifikasiMasalahList = () => {
 
     const fetchAfdOptions = async (tahun: string, bulan: string, rpc: string, kebun: string) => {
         try {
-            const response = await axios.get(`http://localhost:5000/afd/${tahun}/${bulan}/${rpc}/${kebun}`);
+            const response = await axios.get(`${apiUrl}/afd/${tahun}/${bulan}/${rpc}/${kebun}`);
             const data = response.data;
             const afdOptions = data.map((item: { afd: string }) => ({
                 value: item.afd,
