@@ -13,9 +13,6 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
 import { TooltipComponent, TitleComponent, GridComponent } from 'echarts/components';
 
-// Register necessary components
-echarts.use([TooltipComponent, TitleComponent, GridComponent, BarChart, PieChart, CanvasRenderer]);
-
 
 import NavLink from "components/link/NavLink";
 import toast from "react-hot-toast";
@@ -403,130 +400,71 @@ const Dashboard = () => {
     <div className="w-full min-h-screen">
 
       <div className="mt-10 mb-5">
-        <div className="relative overflow-x-auto overflow-y-hidden border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white">
-          <div className="p-4 border-b border-gray-200 dark:border-navy-700 flex justify-end items-center">
-            <h1 className="text-lg font-semibold text-navy-800 dark:text-white w-full">GRAFIK MONITORING PICA</h1>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-            <div className="mr-4">
-              <Select
-                options={regionalOptions}
-                onChange={handleIsRegionalSelectChange}
-                className=""
-                instanceId={instanceId}
-                placeholder="Pilih Regional"
-                isSearchable={true}
-                styles={customStyles}
-                value={watch("regional")}
-                defaultValue={regionalOptions.find((option) => option.value === "regional1")}
-                menuPortalTarget={document.body}
-                menuPlacement="auto"
-                {...register("regional", { required: true })}
-              />
-            </div>
-            <div className="mr-4">
-              <Select
-                options={kebunOptions}
-                onChange={handleIsKebunSelectChange}
-                className=""
-                instanceId={instanceId}
-                placeholder="Pilih Kebun"
-                isSearchable={true}
-                styles={customStyles}
-                value={watch("kebun")}
-                defaultValue={kebunOptions.find((option) => option.value === "kebun1")}
-                menuPortalTarget={document.body}
-                menuPlacement="auto"
-                {...register("kebun", { required: true })}
-              />
-            </div>
-            <div className="mr-4">
-              <Select
-                options={tahunOptions}
-                onChange={handleIsTahunSelectChange}
-                className=""
-                instanceId={instanceId}
-                placeholder="Pilih Tahun"
-                isSearchable={true}
-                styles={customStyles}
-                value={watch("tahun")}
-                defaultValue={tahunOptions.find((option) => option.value === "2022")}
-                menuPortalTarget={document.body}
-                menuPlacement="auto"
-                {...register("tahun", { required: true })}
-              />
-            </div>
-            <div className="mr-4">
-              <Select
-                options={bulanOptions}
-                onChange={handleIsKebunSelectChange}
-                className=""
-                instanceId={instanceId}
-                placeholder="Pilih Bulan"
-                isSearchable={true}
-                styles={customStyles}
-                value={watch("bulan")}
-                defaultValue={bulanOptions.find((option) => option.value === "january")}
-                menuPortalTarget={document.body}
-                menuPlacement="auto"
-                {...register("bulan", { required: true })}
-              />
-            </div>
+        <div className="relative overflow-x-auto overflow-y-hidden border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-800 dark:text-white">
+          <div className="p-4 border-b border-gray-200 dark:border-navy-700 flex justify-between items-center">
+            <h1 className="text-lg font-semibold text-navy-800 dark:text-white">GRAFIK MONITORING PICA</h1>
+            <select className="ml-4 p-2 rounded-lg bg-white dark:bg-navy-700 border border-gray-300 dark:border-navy-600 text-navy-800 dark:text-white paddingHorizontal-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" name="filter" id="filter">
+              <option value="keseluruhan">Blok</option>
+              <option value="regional">Regional</option>
+              <option value="kebun">Kebun</option>
+              <option value="afdeling">Afdeling</option>
+            </select>
           </div>
         </div>
       </div>
 
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-        <div className="relative overflow-x-auto overflow-y-hidden border-black rounded-lg shadow-lg border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+        <div className="relative overflow-x-auto overflow-y-hidden border-black rounded-lg shadow-lg border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-800 dark:text-white p-5 flex flex-col justify-center items-center">
           <h3 className="text-center font-bold underline decoration-black">Hitam</h3>
-          <h1 className="text-6xl text-center font-bold">{hitam}</h1>
+          <h1 className="text-4xl text-center font-bold">{hitam}</h1>
         </div>
-        <div className="relative overflow-x-auto overflow-y-hidden border-orange-300 rounded-lg shadow-lg dark:border-orange-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+        <div className="relative overflow-x-auto overflow-y-hidden border-orange-300 rounded-lg shadow-lg dark:border-orange-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-800 dark:text-white p-5 flex flex-col justify-center items-center">
           <h3 className="text-center font-bold underline decoration-orange-300">Emas</h3>
-          <h1 className="text-6xl text-center font-bold">{emas}</h1>
+          <h1 className="text-4xl text-center font-bold">{emas}</h1>
         </div>
-        <div className="relative overflow-x-auto overflow-y-hidden border-green-500 rounded-lg shadow-lg border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+        <div className="relative overflow-x-auto overflow-y-hidden border-green-500 rounded-lg shadow-lg border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-800 dark:text-white p-5 flex flex-col justify-center items-center">
           <h3 className="text-center font-bold underline decoration-green-500">Hijau</h3>
-          <h1 className="text-6xl text-center font-bold">{hijau}</h1>
+          <h1 className="text-4xl text-center font-bold">{hijau}</h1>
         </div>
-        <div className="relative overflow-x-auto overflow-y-hidden border-yellow-500 rounded-lg shadow-lg dark:border-yellow-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+        <div className="relative overflow-x-auto overflow-y-hidden border-yellow-500 rounded-lg shadow-lg dark:border-yellow-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-800 dark:text-white p-5 flex flex-col justify-center items-center">
           <h3 className="text-center font-bold underline decoration-yellow-500">Kuning</h3>
-          <h1 className="text-6xl text-center font-bold">{kuning}</h1>
+          <h1 className="text-4xl text-center font-bold">{kuning}</h1>
         </div>
-        <div className="relative overflow-x-auto overflow-y-hidden border-red-700 rounded-lg shadow-lg dark:border-red-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
+        <div className="relative overflow-x-auto overflow-y-hidden border-red-700 rounded-lg shadow-lg dark:border-red-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-800 dark:text-white p-5 flex flex-col justify-center items-center">
           <h3 className="text-center font-bold underline decoration-red-700">Merah</h3>
-          <h1 className="text-6xl text-center font-bold">{merah}</h1>
+          <h1 className="text-4xl text-center font-bold">{merah}</h1>
         </div>
       </div>
 
       <div className="mt-3 grid lg:grid-cols-2 gap-5 sm:grid sm:grid-cols-12">
 
 
-        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+        <div className="bg-white dark:bg-navy-800 p-4 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Tua</h3>
           <div className="flex">
             <PieChartDashboard nameData='Tua' downloadJsonData={pieDataTua.downloadJsonTua} builderJsonData={pieDataTua.builderJsonTua} />
           </div>
         </div>
-        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+        <div className="bg-white dark:bg-navy-800 p-4 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Remaja</h3>
           <div className="flex">
             <PieChartDashboard nameData='Remaja' downloadJsonData={pieDataRemaja.downloadJsonRemaja} builderJsonData={pieDataRemaja.builderJsonRemaja} />
           </div>
         </div>
-        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+        <div className="bg-white dark:bg-navy-800 p-4 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Renta</h3>
           <div className="flex">
             <PieChartDashboard nameData='Renta' downloadJsonData={pieDataRenta.downloadJsonRenta} builderJsonData={pieDataRenta.builderJsonRenta} />
           </div>
         </div>
-        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+        <div className="bg-white dark:bg-navy-800 p-4 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Muda</h3>
           <div className="flex">
             <PieChartDashboard nameData='Muda' downloadJsonData={pieDataMuda.downloadJsonMuda} builderJsonData={pieDataMuda.builderJsonMuda} />
           </div>
         </div>
-        <div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
+        <div className="bg-white dark:bg-navy-800 p-4 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Dewasa</h3>
           <div className="flex">
             <PieChartDashboard nameData='Dewasa' downloadJsonData={pieDataDewasa.downloadJsonDewasa} builderJsonData={pieDataDewasa.builderJsonDewasa} />
