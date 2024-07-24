@@ -41,11 +41,6 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
     ];
 
     const option = {
-      backgroundColor: {
-        type: 'pattern',
-        image: canvas,
-        repeat: 'repeat'
-      },
       tooltip: {},
       title: [
         {
@@ -145,7 +140,7 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
     };
 
     const myChart = echarts.init(chartRef.current);
-    // myChart.setOption(option);
+    myChart.setOption(option);
 
     return () => {
       myChart.dispose();
