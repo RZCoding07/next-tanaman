@@ -145,7 +145,7 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
     };
 
     const myChart = echarts.init(chartRef.current);
-    myChart.setOption(option);
+    // myChart.setOption(option);
 
     return () => {
       myChart.dispose();
