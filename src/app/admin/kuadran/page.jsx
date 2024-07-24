@@ -90,65 +90,7 @@ const KuadranList = (props) => {
         </div>
 
         {/* Table */}
-        <div className="mt-10">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-5">Data Report</h2>
-          <div className="relative overflow-x-auto overflow-y-hidden border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px]">
-            <Table
-              aria-label="Example table with custom cells, pagination and sorting"
-              isHeaderSticky
-              bottomContent={
-                <div className="py-2 px-2 flex justify-between items-center">
-                  <Button isDisabled={!cursor || isFetching} size="sm" variant="flat" onClick={handlePreviousPage}>
-                    Previous
-                  </Button>
-                  <Pagination
-                    isCompact
-                    showControls
-                    showShadow
-                    color="primary"
-                    total={dataAllReport.length / limitPerPage}
-                    onChange={(page) => setCursor(page * limitPerPage)}
-                  />
-                  <Button isDisabled={isEndOfData || isFetching} size="sm" variant="flat" onClick={handleNextPage}>
-                    Next
-                  </Button>
-                </div>
-              }
-            >
-              <TableHeader>
-                <TableColumn>No</TableColumn>
-                <TableColumn>Bulan</TableColumn>
-                <TableColumn>Tahun</TableColumn>
-                <TableColumn>Diupload Tanggal</TableColumn>
-                <TableColumn>Aksi</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8">
-                      <PageLoading />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  dataAllReport.map((item, index) => (
-                    <TableRow key={item.id} className="bg-white border-b dark:bg-navy-700 dark:border-navy-600">
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>{item.bulan}</TableCell>
-                      <TableCell>{item.tahun}</TableCell>
-                      <TableCell>{item.createdAt}</TableCell>
-                      <TableCell className="flex justify-center gap-4">
-                        <DeleteButton
-                          endPointUrl={`/report/${item.id}`}
-                          getDataAgain={fetchData}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
+
       </div>
     </>
   );
