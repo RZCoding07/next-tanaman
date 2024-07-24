@@ -145,7 +145,7 @@ const UploadIplFile = () => {
             setMappedData(
                 values.map((value) => ({
                     kondisi: value[0],
-                    status_umur: value[1],
+                    status_umur: value[1].charAt(0).toUpperCase() + value[1].slice(1).toLowerCase(),
                     kebun: value[2],
                     kkl_kebun: value[3],
                     afd: value[4],
@@ -156,7 +156,7 @@ const UploadIplFile = () => {
                     pkk_ha: value[9],
                     rpc: value[10],
                     r: value[11],
-                    warna: value[12],
+                    warna: value[12].toUpperCase(),
                     report_id: reportId,
                     bulan: selectedMonth.value,
                     tahun: selectedYear.value
@@ -349,7 +349,7 @@ const UploadIplFile = () => {
 
                 const mappedData = values.map((value) => ({
                     kondisi: value[0],
-                    status_umur: value[1],
+                    status_umur: value[1].charAt(0).toUpperCase() + value[1].slice(1).toLowerCase(),
                     kebun: value[2],
                     kkl_kebun: value[3],
                     afd: value[4],
@@ -360,11 +360,12 @@ const UploadIplFile = () => {
                     pkk_ha: value[9],
                     rpc: value[10],
                     r: value[11],
-                    warna: value[12],
+                    warna: value[12].toUpperCase(),
                     bulan: selectedMonth.value,
                     tahun: selectedYear.value,
                     report_id: reportId || reportData.payload.id
                 }));
+                
 
                 const chunkSize = Math.ceil(mappedData.length / 10);
                 const uploadPromises = [];

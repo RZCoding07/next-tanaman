@@ -11,16 +11,17 @@ import { Tokens } from "types/token";
 import { KuadranType } from "types/kuadran";
 import { ReportType } from "types/report";
 import axios from "axios";
+import { useStateManager } from "react-select";
 
 const KuadranList = (props) => {
   if (isWindowAvailable()) document.title = "Kuadran List";
 
   const [dataAllReport, setDataAllReport] = useState([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [searchInput, setSearchInput] = useState<string>("");
-  const [cursor, setCursor] = useState<number | null>(null);
-  const [nextCursor, setNextCursor] = useState<number | null>(null);
-  const [limitPerPage, setLimitPerPage] = useState<number>(10);
+  const [searchInput, setSearchInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [cursor, setCursor] = useState(null);
+  const [nextCursor, setNextCursor] = useState(null);
+  const [limitPerPage, setLimitPerPage] = useState(10);
   const [isFetching, setIsFetching] = useState(false);
   const [isEndOfData, setIsEndOfData] = useState(false);
 
