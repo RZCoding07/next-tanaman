@@ -441,17 +441,6 @@ const IdentifikasiMasalahList = () => {
                     </div>
                 </div>
 
-                {/* Render modal */}
-                {isModalOpen && (
-                    <div className="fixed inset-0 flex items-center justify-center z-50">
-                        <div className="bg-white p-5 rounded-lg shadow-lg dark:bg-navy-800">
-                            <ModalIdentifikasiMasalah
-                                item={selectedItem}
-                                onClose={handleCloseModal}
-                            />
-                        </div>
-                    </div>
-                )}
 
                 {/* Pagination Controls */}
                 <div className="flex justify-between mt-4">
