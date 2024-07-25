@@ -41,31 +41,53 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
     ];
 
     const option = {
-      tooltip: {},
+      tooltip: {
+        trigger: 'item'
+      },
       title: [
         {
           text: nameData,
-          subtext: 'Total ' + Object.keys(downloadJson).reduce(function (all, key) {
-            return all + downloadJson[key];
-          }, 0),
           left: '50%',
-          textAlign: 'center'
+          textAlign: 'center',
         }
       ],
+      legend: {
+        top: '5%',
+        left: 'center'
+      },
       series: [
         {
+          name: 'Total Pie',
           type: 'pie',
-          radius: [0, '50%'],
-          center: ['50%', '50%'],
-          data: Object.keys(downloadJson).map(function (key, index) {
-            return {
-              itemStyle: {
-                color: colors[index % colors.length]
-              },
-              name: key,
-              value: downloadJson[key]
-            };
-          })
+          radius: ['35%', '60%'],
+          avoidLabelOverlap: false,
+          padAngle: 5,
+          itemStyle: {
+            borderRadius: 10,
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 40,
+              fontWeight: 'bold'
+            }
+          },
+          labelLine: {
+            show: false
+          },
+          data: Object.keys(downloadJson).map((key, index) => ({
+            itemStyle: {
+              color: colors[index % colors.length]
+            },
+            name: key,
+            value: downloadJson[key]
+          }))
         }
       ]
     };

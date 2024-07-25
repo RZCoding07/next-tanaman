@@ -1,12 +1,19 @@
 'use client';
 import axios from "axios";
 import React, { useEffect, useRef, useId, useState, useCallback } from "react";
-
+import { UserType } from "types/user";
+import { BiEdit, BiTrash } from "react-icons/bi";
+import { TbReportSearch } from "react-icons/tb";
+import Link from "next/link";
 import { ReportType } from "types/report";
 import Select from 'react-select';
-
+import PageLoading from "components/loading/LoadingSkeleton";
+import DeleteButton from "components/buttons/DeleteButton";
+import CreateButton from "components/buttons/CreateButton";
 import { isWindowAvailable } from "utils/navigation";
 import PieChartDashboard from 'components/charts/PieChartDashboard';
+import PieChartDashboardDonut from 'components/charts/PieChartDashboardDonut';
+import ComplexTable from "components/admin/data-tables/ComplexTable";
 
 
 import cookie from "js-cookie";
@@ -14,21 +21,6 @@ import { Tokens } from "types/token";
 
 
 const Dashboard = () => {
-
-
-	// Mengambil semua class dari elemen body
-	const bodyClasses = document.body.classList;
-
-	// Mengambil class pertama dari elemen body (jika ada)
-	const firstClass = document.body.classList[0];
-
-	// Mengecek apakah elemen body memiliki class 'dark'
-	let hasDarkClass = document.body.classList.contains('dark');
-
-	// Menambahkan class 'dark' ke elemen body jika belum ada
-
-	let color = "dark";
-
 
 	const [darkmode, setDarkmode] = useState(
 		document.body.classList.contains('dark')
@@ -236,6 +228,60 @@ const Dashboard = () => {
 
 
 
+	// table
+	if (isWindowAvailable()) document.title = "User List";
+
+	const [dataAllUser, setDataAllUser] = useState<UserType[]>([]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 10;
+
+	// Mengambil data user dari API
+	const getAllDataUser = async () => {
+		setIsLoading(true);
+		const loginData = cookie.get("token");
+		const tokenData: Tokens = JSON.parse(loginData || "{}");
+
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${tokenData.payload.access_token}`,
+			},
+		});
+		const data = await res.json();
+		if (data.status_code === 200) {
+			setDataAllUser(data.payload);
+			setIsLoading(false);
+		}
+		console.log(cookie.get("token"));
+	};
+
+	useEffect(() => {
+		getAllDataUser();
+	}, []);
+
+	const indexOfLastItem = currentPage * itemsPerPage;
+	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+	const currentItems = dataAllUser
+		.filter((user) => {
+			if (searchInput === "") {
+				return user;
+			} else if (
+				user.username?.toLowerCase().includes(searchInput?.toLowerCase()) ||
+				user.role?.toLowerCase().includes(searchInput?.toLowerCase())
+			) {
+				return user;
+			}
+		});
+
+	// Mengubah halaman saat ini
+	const paginate = (pageNumber: number) => {
+		setCurrentPage(pageNumber);
+	};
+
+
+
 
 	const instanceId = useId();
 
@@ -278,31 +324,6 @@ const Dashboard = () => {
 
 		getAllReport();
 	}, []);
-
-
-	type Gata = {
-		keterangan: {
-			value: string;
-			label: string;
-		},
-		regional: {
-			value: string;
-			label: string;
-		},
-		kebun: {
-			value: string;
-			label: string;
-		},
-		tahun: {
-			value: string;
-			label: string;
-		},
-		bulan: {
-			value: string;
-			label: string;
-		};
-	};
-
 
 
 	const [filters, setFilters] = useState({
@@ -469,139 +490,148 @@ const Dashboard = () => {
 		fetchTahunOptions();
 	}, [fetchTahunOptions]);
 
+	// sample data
+	const sample_data = [
+		{
+			"name": "mantap1",
+			"progress": "mantap1",
+			"quantity": 45,
+			"date": "24/7/2023"
+		},
+		{
+			"name": "mantap2",
+			"progress": "mantap2",
+			"quantity": 67,
+			"date": "9/4/2023"
+		},
+		{
+			"name": "mantap3",
+			"progress": "mantap3",
+			"quantity": 12,
+			"date": "12/5/2023"
+		},
+		{
+			"name": "mantap4",
+			"progress": "mantap4",
+			"quantity": 89,
+			"date": "3/1/2023"
+		},
+		{
+			"name": "mantap5",
+			"progress": "mantap5",
+			"quantity": 53,
+			"date": "25/2/2023"
+		}];
 
 
 
 
 	return (
 		<div className="w-full min-h-screen">
-
 			<div className="mt-10 mb-5">
-				<div className="relative overflow-x-auto overflow-y-hidden border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white">
+				<div className="border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white z-50 relative">
 					<div className="p-4 border-b border-gray-200 dark:border-navy-700 flex justify-center">
 						<h1 className="text-lg font-semibold text-navy-800 dark:text-white">GRAFIK MONITORING PICA</h1>
 					</div>
 					<div className="p-4">
-						{/* Content can go here if needed */}
-					</div>
-				</div>
-
-				{/* Filter Dropdowns */}
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 mt-4">
-					<div className="mr-4">
-						<Select
-							options={tahunOptions}
-							placeholder="Pilih Tahun"
-							value={tahunOptions.find(option => option.value === filters.selectedTahun)}
-							onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedTahun")}
-							isClearable
-							styles={customStyles}
-						/>
-					</div>
-					<div className="mr-4">
-						<Select
-							options={bulanOptions}
-							placeholder="Pilih Bulan"
-							value={bulanOptions.find(option => option.value === filters.selectedBulan)}
-							onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedBulan")}
-							isClearable
-							styles={customStyles}
-						/>
-					</div>
-					<div className="mr-4">
-						<Select
-							options={regionalOptions}
-							placeholder="Pilih RPC"
-							value={regionalOptions.find(option => option.value === filters.selectedRpc)}
-							onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedRpc")}
-							isClearable
-							styles={customStyles}
-						/>
-					</div>
-					<div className="mr-4">
-						<Select
-							options={kebunOptions}
-							placeholder="Pilih Kebun"
-							value={kebunOptions.find(option => option.value === filters.selectedKebun)}
-							onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedKebun")}
-							isClearable
-							styles={customStyles}
-						/>
-					</div>
-					<div className="mr-4">
-						<Select
-							options={afdOptions}
-							placeholder="Pilih AFD"
-							value={afdOptions.find(option => option.value === filters.selectedAfd)}
-							onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedAfd")}
-							isClearable
-							styles={customStyles}
-						/>
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 mt-4 relative z-50">
+							<div className="mr-4">
+								<Select
+									options={tahunOptions}
+									placeholder="Pilih Tahun"
+									value={tahunOptions.find(option => option.value === filters.selectedTahun)}
+									onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedTahun")}
+									isClearable
+									styles={customStyles}
+								/>
+							</div>
+							<div className="mr-4">
+								<Select
+									options={bulanOptions}
+									placeholder="Pilih Bulan"
+									value={bulanOptions.find(option => option.value === filters.selectedBulan)}
+									onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedBulan")}
+									isClearable
+									styles={customStyles}
+								/>
+							</div>
+							<div className="mr-4">
+								<Select
+									options={regionalOptions}
+									placeholder="Pilih RPC"
+									value={regionalOptions.find(option => option.value === filters.selectedRpc)}
+									onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedRpc")}
+									isClearable
+									styles={customStyles}
+								/>
+							</div>
+							<div className="mr-4">
+								<Select
+									options={kebunOptions}
+									placeholder="Pilih Kebun"
+									value={kebunOptions.find(option => option.value === filters.selectedKebun)}
+									onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedKebun")}
+									isClearable
+									styles={customStyles}
+								/>
+							</div>
+							<div className="mr-4">
+								<Select
+									options={afdOptions}
+									placeholder="Pilih AFD"
+									value={afdOptions.find(option => option.value === filters.selectedAfd)}
+									onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedAfd")}
+									isClearable
+									styles={customStyles}
+								/>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 
-
-
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-				<div className="relative overflow-x-auto overflow-y-hidden border-black rounded-lg shadow-lg border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
-					<h3 className="text-center font-bold underline decoration-black">Hitam</h3>
-					<h1 className="text-6xl text-center font-bold">{hitam}</h1>
-				</div>
-				<div className="relative overflow-x-auto overflow-y-hidden border-orange-300 rounded-lg shadow-lg dark:border-orange-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
-					<h3 className="text-center font-bold underline decoration-orange-300">Emas</h3>
-					<h1 className="text-6xl text-center font-bold">{emas}</h1>
-				</div>
-				<div className="relative overflow-x-auto overflow-y-hidden border-green-500 rounded-lg shadow-lg border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
-					<h3 className="text-center font-bold underline decoration-green-500">Hijau</h3>
-					<h1 className="text-6xl text-center font-bold">{hijau}</h1>
-				</div>
-				<div className="relative overflow-x-auto overflow-y-hidden border-yellow-500 rounded-lg shadow-lg dark:border-yellow-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
-					<h3 className="text-center font-bold underline decoration-yellow-500">Kuning</h3>
-					<h1 className="text-6xl text-center font-bold">{kuning}</h1>
-				</div>
-				<div className="relative overflow-x-auto overflow-y-hidden border-red-700 rounded-lg shadow-lg dark:border-red-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white p-5 flex flex-col justify-center items-center">
-					<h3 className="text-center font-bold underline decoration-red-700">Merah</h3>
-					<h1 className="text-6xl text-center font-bold">{merah}</h1>
-				</div>
-			</div>
-
-			<div className="mt-3 grid lg:grid-cols-2 gap-5 sm:grid sm:grid-cols-12">
-
-
-				<div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-					<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Tua</h3>
+			<div className="flex gap-5">
+				<div className="grid grid-cols-1 gap-5 md:grid-cols-1 flex-1">
 					<div className="flex">
-						<PieChartDashboard nameData='Tua' downloadJsonData={pieDataTua.downloadJsonTua} builderJsonData={pieDataTua.builderJsonTua} />
+						<PieChartDashboardDonut nameData="Total" downloadJsonData={pieDataMuda.downloadJsonMuda} builderJsonData={pieDataMuda.builderJsonMuda} />
+					</div>
+					<div className="flex">
+						<PieChartDashboard nameData="Muda" downloadJsonData={pieDataMuda.downloadJsonMuda} builderJsonData={pieDataMuda.builderJsonMuda} />
+					</div>
+					<div className="flex">
+						<PieChartDashboard nameData="Remaja" downloadJsonData={pieDataRemaja.downloadJsonRemaja} builderJsonData={pieDataRemaja.builderJsonRemaja} />
+					</div>
+					<div className="flex">
+						<PieChartDashboard nameData="Dewasa" downloadJsonData={pieDataDewasa.downloadJsonDewasa} builderJsonData={pieDataDewasa.builderJsonDewasa} />
+					</div>
+					<div className="flex">
+						<PieChartDashboard nameData="Tua" downloadJsonData={pieDataTua.downloadJsonTua} builderJsonData={pieDataTua.builderJsonTua} />
+					</div>
+					<div className="flex">
+						<PieChartDashboard nameData="Renta" downloadJsonData={pieDataRenta.downloadJsonRenta} builderJsonData={pieDataRenta.builderJsonRenta} />
 					</div>
 				</div>
-				<div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-					<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Remaja</h3>
+				<div className="grid grid-cols-1 gap-5 md:grid-cols-1 flex-1">
 					<div className="flex">
-						<PieChartDashboard nameData='Remaja' downloadJsonData={pieDataRemaja.downloadJsonRemaja} builderJsonData={pieDataRemaja.builderJsonRemaja} />
+						<ComplexTable tableData={sample_data} />
 					</div>
-				</div>
-				<div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-					<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Renta</h3>
 					<div className="flex">
-						<PieChartDashboard nameData='Renta' downloadJsonData={pieDataRenta.downloadJsonRenta} builderJsonData={pieDataRenta.builderJsonRenta} />
+						<ComplexTable tableData={sample_data} />
 					</div>
-				</div>
-				<div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-					<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Muda</h3>
 					<div className="flex">
-						<PieChartDashboard nameData='Muda' downloadJsonData={pieDataMuda.downloadJsonMuda} builderJsonData={pieDataMuda.builderJsonMuda} />
+						<ComplexTable tableData={sample_data} />
 					</div>
-				</div>
-				<div className="bg-white dark:bg-navy-900 p-4 rounded-lg shadow-md">
-					<h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 text-center mb-3">Dewasa</h3>
 					<div className="flex">
-						<PieChartDashboard nameData='Dewasa' downloadJsonData={pieDataDewasa.downloadJsonDewasa} builderJsonData={pieDataDewasa.builderJsonDewasa} />
+						<ComplexTable tableData={sample_data} />
+					</div>
+					<div className="flex">
+						<ComplexTable tableData={sample_data} />
 					</div>
 				</div>
 			</div>
 		</div>
 	);
+
 }
 
 export default Dashboard;

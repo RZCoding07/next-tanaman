@@ -25,6 +25,7 @@ const columnHelper = createColumnHelper<RowObj>();
 // const columns = columnsDataCheck;
 export default function ComplexTable(props: { tableData: any }) {
   const { tableData } = props;
+  
   const [sorting, setSorting] = React.useState<SortingState>([]);
   let defaultData = tableData;
   const columns = [
