@@ -381,57 +381,6 @@ const Dashboard = () => {
 	// table
 	if (isWindowAvailable()) document.title = "Dashboard - PICA";
 
-	const [dataAllUser, setDataAllUser] = useState<UserType[]>([]);
-	const [currentPage, setCurrentPage] = useState(1);
-	const itemsPerPage = 10;
-
-	// Mengambil data user dari API
-	const getAllDataUser = async () => {
-		setIsLoading(true);
-		const loginData = cookie.get("token");
-		const tokenData: Tokens = JSON.parse(loginData || "{}");
-
-		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-			method: "GET",
-			headers: {
-				accept: "application/json",
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${tokenData.payload.access_token}`,
-			},
-		});
-		const data = await res.json();
-		if (data.status_code === 200) {
-			setDataAllUser(data.payload);
-			setIsLoading(false);
-		}
-		console.log(cookie.get("token"));
-	};
-
-	useEffect(() => {
-		getAllDataUser();
-	}, []);
-
-	const indexOfLastItem = currentPage * itemsPerPage;
-	const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-	const currentItems = dataAllUser
-		.filter((user) => {
-			if (searchInput === "") {
-				return user;
-			} else if (
-				user.username?.toLowerCase().includes(searchInput?.toLowerCase()) ||
-				user.role?.toLowerCase().includes(searchInput?.toLowerCase())
-			) {
-				return user;
-			}
-		});
-
-	// Mengubah halaman saat ini
-	const paginate = (pageNumber: number) => {
-		setCurrentPage(pageNumber);
-	};
-
-
-
 
 	const instanceId = useId();
 
