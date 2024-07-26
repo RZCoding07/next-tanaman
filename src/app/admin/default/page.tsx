@@ -27,6 +27,9 @@ const Dashboard = () => {
 	const [darkmode, setDarkmode] = useState(
 		document.body.classList.contains('dark')
 	);
+	const [darkmode, setDarkmode] = useState(
+		document.body.classList.contains('dark')
+	);
 
 	// temp data for table 
 	const dataTempTable = {
@@ -193,7 +196,43 @@ const Dashboard = () => {
 	if (isWindowAvailable()) {
 		document.title = 'Dashboard';
 	}
+	if (isWindowAvailable()) {
+		document.title = 'Dashboard';
+	}
 
+	const customStyles = {
+		control: (provided, state) => ({
+			...provided,
+			backgroundColor: '#F9FAFB', // bg-gray-50
+			borderColor: state.isFocused ? '#38A169' : '#38A169', // border-green-600
+			color: '#1A202C', // text-gray-900
+			borderRadius: '100px', // rounded-full
+			paddingLeft: '2.5rem', // pl-10
+			padding: '0.1rem', // p-2.5
+			boxShadow: state.isFocused ? '0 0 0 2px rgba(56, 161, 105, 0.5)' : null, // focus:ring-2 focus:ring-opacity-50
+			'&:hover': {
+				borderColor: '#38A169',
+			},
+			'&:active': {
+				outline: 'none',
+			},
+			'&:focus': {
+				outline: 'none',
+			},
+		}),
+		placeholder: (provided) => ({
+			...provided,
+			color: '#A0AEC0', // text-gray-500
+		}),
+		singleValue: (provided) => ({
+			...provided,
+			color: '#1A202C', // text-gray-900
+		}),
+		menuPortal: (provided) => ({
+			...provided,
+			zIndex: 9999,
+		}),
+	};
 	const customStyles = {
 		control: (provided, state) => ({
 			...provided,
@@ -234,8 +273,29 @@ const Dashboard = () => {
 			label: string;
 		}
 	};
+	type Data = {
+		report: {
+			value: string;
+			label: string;
+		}
+	};
 
 
+	// GET TAHUN DATA
+	const [dataReport, setDataReport] = useState<any>([]);
+	// const [dataAllReport, setAllDataReport] = useState<any>([]);
+	const [bulan, setBulan] = useState<any>(1);
+	const [tahun, setTahun] = useState<any>(2021);
+	const [emas, setEmas] = useState<any>(0);
+	const [hitam, setHitam] = useState<any>(0);
+	const [hijau, setHijau] = useState<any>(0);
+	const [kuning, setKuning] = useState<any>(0);
+	const [merah, setMerah] = useState<any>(0);
+	const [tua, setTua] = useState<any>(0);
+	const [muda, setMuda] = useState<any>(0);
+	const [remaja, setRemaja] = useState<any>(0);
+	const [renta, setRenta] = useState<any>(0);
+	const [dewasa, setDewasa] = useState<any>(0);
 	// GET TAHUN DATA
 	const [dataReport, setDataReport] = useState<any>([]);
 	// const [dataAllReport, setAllDataReport] = useState<any>([]);
@@ -260,7 +320,23 @@ const Dashboard = () => {
 	const getAllReport = async () => {
 		const loginData = cookie.get("token");
 		const tokenData: Tokens = JSON.parse(loginData || "{}");
+	// Mengambil data kebun dari API
+	const getAllReport = async () => {
+		const loginData = cookie.get("token");
+		const tokenData: Tokens = JSON.parse(loginData || "{}");
 
+		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/report`, {
+			method: "GET",
+			headers: {
+				accept: "application/json",
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${tokenData.payload.access_token}`,
+			},
+		});
+		const data = await res.json();
+		if (data.status_code === 200) {
+			// console.log(data.data);
+			// set mappedData to value label
 		const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/report`, {
 			method: "GET",
 			headers: {
@@ -294,9 +370,31 @@ const Dashboard = () => {
 					label: bulanOpt[item.bulan - 1].label + " " + item.tahun
 				};
 			});
+			let bulanOpt = [
+				{ value: '1', label: 'Januari' },
+				{ value: '2', label: 'Februari' },
+				{ value: '3', label: 'Maret' },
+				{ value: '4', label: 'April' },
+				{ value: '5', label: 'Mei' },
+				{ value: '6', label: 'Juni' },
+				{ value: '7', label: 'Juli' },
+				{ value: '8', label: 'Agustus' },
+				{ value: '9', label: 'September' },
+				{ value: '10', label: 'Oktober' },
+				{ value: '11', label: 'November' },
+				{ value: '12', label: 'Desember' },
+			];
+			const mappedData = data.payload.map((item: any) => {
+				return {
+					value: item.id,
+					label: bulanOpt[item.bulan - 1].label + " " + item.tahun
+				};
+			});
 
 			setDataReport(mappedData);
+			setDataReport(mappedData);
 
+			// setAllDataReport(data.payload);
 			// setAllDataReport(data.payload);
 
 			setEmas(data.payload[0].emas);
@@ -311,7 +409,20 @@ const Dashboard = () => {
 			setDewasa(data.payload[0].dewasa);
 			setBulan(data.payload[0].bulan);
 			setTahun(data.payload[0].tahun);
+			setEmas(data.payload[0].emas);
+			setHitam(data.payload[0].hitam);
+			setHijau(data.payload[0].hijau);
+			setKuning(data.payload[0].kuning);
+			setMerah(data.payload[0].merah);
+			setTua(data.payload[0].tua);
+			setMuda(data.payload[0].muda);
+			setRemaja(data.payload[0].remaja);
+			setRenta(data.payload[0].renta);
+			setDewasa(data.payload[0].dewasa);
+			setBulan(data.payload[0].bulan);
+			setTahun(data.payload[0].tahun);
 
+			console.log(data.payload);
 			console.log(data.payload);
 
 		} else {
@@ -319,8 +430,17 @@ const Dashboard = () => {
 			console.error("Failed to fetch data");
 		}
 	};
+		} else {
+			// handle error
+			console.error("Failed to fetch data");
+		}
+	};
 
 
+	const fetchFilteredData = async () => {
+		try {
+			const loginData = cookie.get("token");
+			const tokenData = JSON.parse(loginData || "{}");
 	const fetchFilteredData = async () => {
 		try {
 			const loginData = cookie.get("token");
@@ -334,7 +454,18 @@ const Dashboard = () => {
 					Authorization: `Bearer ${tokenData.payload.access_token}`,
 				},
 			});
+			const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/grafik/filter?tahun=2024&bulan=1&rpc=&kebun=&afd=`, {
+				method: "GET",
+				headers: {
+					accept: "application/json",
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${tokenData.payload.access_token}`,
+				},
+			});
 
+			if (!res.ok) {
+				throw new Error("Network response was not ok");
+			}
 			if (!res.ok) {
 				throw new Error("Network response was not ok");
 			}
@@ -346,11 +477,31 @@ const Dashboard = () => {
 			throw error;
 		}
 	};
+			const resultData = await res.json();
+			return resultData;
+		} catch (error) {
+			console.error("Failed to fetch data:", error);
+			throw error;
+		}
+	};
 
 	const processPieData = (setPieData: any, data: any, category: string, stateName: string) => {
 		if (data.result && data.result[category]) {
 			const categoryData = data.result[category];
+	const processPieData = (setPieData: any, data: any, category: string, stateName: string) => {
+		if (data.result && data.result[category]) {
+			const categoryData = data.result[category];
 
+			const builderJson = {
+				all: categoryData.hitam + categoryData.emas + categoryData.hijau + categoryData.kuning + categoryData.merah,
+				charts: {
+					hitam: categoryData.hitam,
+					emas: categoryData.emas,
+					hijau: categoryData.hijau,
+					kuning: categoryData.kuning,
+					merah: categoryData.merah,
+				},
+			};
 			const builderJson = {
 				all: categoryData.hitam + categoryData.emas + categoryData.hijau + categoryData.kuning + categoryData.merah,
 				charts: {
@@ -369,7 +520,19 @@ const Dashboard = () => {
 				kuning: categoryData.kuning,
 				merah: categoryData.merah,
 			};
+			const downloadJson = {
+				hitam: categoryData.hitam,
+				emas: categoryData.emas,
+				hijau: categoryData.hijau,
+				kuning: categoryData.kuning,
+				merah: categoryData.merah,
+			};
 
+			setPieData({ [`builderJson${stateName}`]: builderJson, [`downloadJson${stateName}`]: downloadJson });
+		} else {
+			console.error(`Failed to fetch data for ${category}: `, data.message);
+		}
+	};
 			setPieData({ [`builderJson${stateName}`]: builderJson, [`downloadJson${stateName}`]: downloadJson });
 		} else {
 			console.error(`Failed to fetch data for ${category}: `, data.message);
@@ -434,7 +597,28 @@ const Dashboard = () => {
 
 
 	const instanceId = useId();
+	const instanceId = useId();
 
+	const [pieDataTua, setPieDataTua] = useState<any>({
+		builderJsonTua: null,
+		downloadJsonTua: null,
+	});
+	const [pieDataRemaja, setPieDataRemaja] = useState<any>({
+		builderJsonRemaja: null,
+		downloadJsonRemaja: null,
+	});
+	const [pieDataRenta, setPieDataRenta] = useState<any>({
+		builderJsonRenta: null,
+		downloadJsonRenta: null,
+	});
+	const [pieDataMuda, setPieDataMuda] = useState<any>({
+		builderJsonMuda: null,
+		downloadJsonMuda: null,
+	});
+	const [pieDataDewasa, setPieDataDewasa] = useState<any>({
+		builderJsonDewasa: null,
+		downloadJsonDewasa: null,
+	});
 	const [pieDataTua, setPieDataTua] = useState<any>({
 		builderJsonTua: null,
 		downloadJsonTua: null,
@@ -469,9 +653,25 @@ const Dashboard = () => {
 				console.error("Error fetching and processing data", error);
 			}
 		};
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const resultData = await fetchFilteredData();
+				processPieData(setPieDataTua, resultData, 'tua', 'Tua');
+				processPieData(setPieDataRemaja, resultData, 'remaja', 'Remaja');
+				processPieData(setPieDataRenta, resultData, 'renta', 'Renta');
+				processPieData(setPieDataMuda, resultData, 'muda', 'Muda');
+				processPieData(setPieDataDewasa, resultData, 'dewasa', 'Dewasa');
+			} catch (error) {
+				console.error("Error fetching and processing data", error);
+			}
+		};
 
 		fetchData();
+		fetchData();
 
+		getAllReport();
+	}, []);
 		getAllReport();
 	}, []);
 
