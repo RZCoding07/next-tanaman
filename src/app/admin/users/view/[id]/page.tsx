@@ -116,7 +116,7 @@ if (typeof window !== 'undefined' && window.localStorage.getItem('darkmode') ===
     }),
   };
 }
-const DetailUser = async ({params}: {params:{id:string}} ) => {
+const DetailUser = async ({ params }: { params: { id: string } }) => {
   const routeer = useRouter();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -139,9 +139,9 @@ const DetailUser = async ({params}: {params:{id:string}} ) => {
     const data = await res.json();
     if (data.status_code === 200) {
       setUsername(data.payload[0].username);
-      setRole(data.payload[0].role); 
+      setRole(data.payload[0].role);
     }
-   
+
   };
 
   useEffect(() => {
@@ -179,10 +179,6 @@ const DetailUser = async ({params}: {params:{id:string}} ) => {
             readOnly
           />
         </div>
-
-
-
-
         <div className="flex justify-end mt-10">
 
           <NavLink
