@@ -1,12 +1,11 @@
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import cookie from "js-cookie";
 import PageLoading from "components/loading/LoadingSkeleton";
 import { isWindowAvailable } from "utils/navigation";
 import { ReportType } from "types/report";
 import Select from 'react-select';
-import ModalIdentifikasiMasalah from "components/admin/default/ModalIdentifikasiMasalah";
 
 import Head from 'next/head';
 import Link from "next/link";
@@ -76,7 +75,7 @@ const IdentifikasiMasalahList = () => {
     const [kebunOptions, setKebunOptions] = useState<{ value: string; label: string }[]>([]);
     const [afdOptions, setAfdOptions] = useState<{ value: string; label: string }[]>([]);
 
-    const fetchData = async (newCursor) => {
+    const fetchData = useCallback(async (newCursor) => {
         setIsLoading(true);
         try {
             const loginData = cookie.get("token");
@@ -112,7 +111,7 @@ const IdentifikasiMasalahList = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [apiUrl, cursor, searchInput, sortBy, sortDirection, filters, limitPerPage]);
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchInput(event.target.value);
@@ -176,9 +175,9 @@ const IdentifikasiMasalahList = () => {
 
 
 
-    const fetchTahunOptions = async () => {
+    const fetchTahunOptions = useCallback(async () => {
         try {
-            const response = await axios.get("http://localhost:5000/tahun");
+            const response = await axios.get(`${apiUrl}/tahun`);
             const tahunData = response.data.map((item: { tahun: number }) => ({
                 value: item.tahun.toString(),
                 label: item.tahun.toString(),
@@ -187,11 +186,13 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching tahun options:", error);
         }
-    };
+    }, [
+        apiUrl,
+    ]);
 
-    const fetchBulanOptions = async (tahun: string) => {
+    const fetchBulanOptions = useCallback(async (tahun: string) => {
         try {
-            const response = await axios.get(`http://localhost:5000/bulan/${tahun}`);
+            const response = await axios.get(`${apiUrl}/bulan/${tahun}`);
             const data = response.data;
             const bulanOptions = data.map((item: { bulan: string }) => ({
                 value: item.bulan,
@@ -201,11 +202,13 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching bulan options:", error);
         }
-    };
+    }, [
+        apiUrl,
+    ]);
 
-    const fetchRpcOptions = async (tahun: string, bulan: string) => {
+    const fetchRpcOptions = useCallback(async (tahun: string, bulan: string) => {
         try {
-            const response = await axios.get(`http://localhost:5000/rpc/${tahun}/${bulan}`);
+            const response = await axios.get(`${apiUrl}/rpc/${tahun}/${bulan}`);
             const data = response.data;
             const regionalOptions = data.map((item: { rpc: string }) => ({
                 value: item.rpc,
@@ -215,11 +218,14 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching rpc options:", error);
         }
-    };
+    }, [
+        apiUrl,
+    ]);
 
-    const fetchKebunOptions = async (tahun: string, bulan: string, rpc: string) => {
+
+    const fetchKebunOptions = useCallback(async (tahun: string, bulan: string, rpc: string) => {
         try {
-            const response = await axios.get(`http://localhost:5000/kebun/${tahun}/${bulan}/${rpc}`);
+            const response = await axios.get(`${apiUrl}/kebun/${tahun}/${bulan}/${rpc}`);
             const data = response.data;
             const kebunOptions = data.map((item: { kebun: string }) => ({
                 value: item.kebun,
@@ -229,11 +235,13 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching kebun options:", error);
         }
-    };
+    }, [
+        apiUrl
+    ]);
 
-    const fetchAfdOptions = async (tahun: string, bulan: string, rpc: string, kebun: string) => {
+    const fetchAfdOptions = useCallback(async (tahun: string, bulan: string, rpc: string, kebun: string) => {
         try {
-            const response = await axios.get(`http://localhost:5000/afd/${tahun}/${bulan}/${rpc}/${kebun}`);
+            const response = await axios.get(`${apiUrl}/afd/${tahun}/${bulan}/${rpc}/${kebun}`);
             const data = response.data;
             const afdOptions = data.map((item: { afd: string }) => ({
                 value: item.afd,
@@ -243,7 +251,9 @@ const IdentifikasiMasalahList = () => {
         } catch (error) {
             console.error("Error fetching afd options:", error);
         }
-    };
+    }, [
+        apiUrl
+    ]);
 
 
     const renderOptions = (options: { value: string, label: string }[]) => {
@@ -253,11 +263,14 @@ const IdentifikasiMasalahList = () => {
     };
     useEffect(() => {
         fetchData(cursor);
-    }, [cursor, searchInput, sortBy, sortDirection, filters]);
+    }, [cursor, searchInput, sortBy, sortDirection, filters, fetchData, limitPerPage]);
 
     useEffect(() => {
         fetchTahunOptions();
-    }, []);
+    }, [
+        fetchTahunOptions, fetchBulanOptions, fetchRpcOptions, fetchKebunOptions, fetchAfdOptions
+
+    ]);
 
     return (
         <>
@@ -420,19 +433,19 @@ const IdentifikasiMasalahList = () => {
                                             <td className="px-6 py-8">{item.r}</td>
                                             <td className="px-6 py-8">{item.warna}</td>
                                             <td className="px-6 py-8">
-                                                {/* <Link
-                                                    href={`/admin/identifikasi-masalah/update/${item.id}`}
-                                                    legacyBehavior>
-                                                    <a className="p-2 bg-green-600 rounded-lg cursor-pointer">
+                                                <Link href={`/admin/identifikasi-masalah/update/${item.id}`} legacyBehavior>
+                                                    <a className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex items-center space-x-2">
                                                         <TbReportSearch className="text-lg text-white cursor-pointer" />
+                                                        <span>Isi Masalah</span>
                                                     </a>
-                                                </Link> */}
-                                                <button
+                                                </Link>
+
+                                                {/* <button
                                                     onClick={() => handleOpenModal(item)}
                                                     className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
                                                 >
                                                     Isi Masalah
-                                                </button>
+                                                </button> */}
                                             </td>
                                         </tr>
                                     ))
@@ -442,17 +455,6 @@ const IdentifikasiMasalahList = () => {
                     </div>
                 </div>
 
-                {/* Render modal */}
-                {isModalOpen && (
-                    <div className="fixed inset-0 flex items-center justify-center z-50">
-                        <div className="bg-white p-5 rounded-lg shadow-lg dark:bg-navy-800">
-                            <ModalIdentifikasiMasalah
-                                item={selectedItem}
-                                onClose={handleCloseModal}
-                            />
-                        </div>
-                    </div>
-                )}
 
                 {/* Pagination Controls */}
                 <div className="flex justify-between mt-4">

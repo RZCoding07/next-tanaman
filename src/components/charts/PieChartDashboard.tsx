@@ -41,11 +41,6 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
     ];
 
     const option = {
-      backgroundColor: {
-        type: 'pattern',
-        image: canvas,
-        repeat: 'repeat'
-      },
       tooltip: {},
       title: [
         {

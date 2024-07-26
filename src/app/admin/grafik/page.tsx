@@ -3,7 +3,7 @@ import axios from "axios";
 
 import cookie from "js-cookie";
 import { ReportType } from "types/report";
-import React, { useEffect, useRef, useId, useState } from "react";
+import React, { useEffect, useRef, useId, useState, useCallback } from "react";
 import { IoMdHome } from 'react-icons/io';
 import { IoDocuments } from 'react-icons/io5';
 import { MdBarChart, MdDashboard } from 'react-icons/md';
@@ -31,19 +31,22 @@ const Dashboard = () => {
         document.body.classList.contains('dark')
     );
 
+
     // Toggle dark mode
-    const handleDarkmode = () => {
-        if (document.body.classList.contains('dark')) {
-            document.body.classList.remove('dark');
-            setDarkmode(false);
-        } else {
-            document.body.classList.add('dark');
-            setDarkmode(true);
-        }
-    };
+    const handleDarkmode = useCallback(() => {
+        setDarkmode(prevDarkmode => {
+            const newDarkmode = !prevDarkmode;
+            document.body.classList.toggle('dark', newDarkmode);
+            return newDarkmode;
+        });
+    }, []);
 
     useEffect(() => {
-        handleDarkmode();
+        document.body.classList.toggle('dark', darkmode);
+    }, [darkmode]);
+
+
+    useEffect(() => {
 
         if (chartRef.current) {
             const chartDom = chartRef.current;
@@ -269,7 +272,7 @@ const Dashboard = () => {
     const [regionalOptions, setRpcOptions] = useState<{ value: string; label: string }[]>([]);
     const [kebunOptions, setKebunOptions] = useState<{ value: string; label: string }[]>([]);
     const [afdOptions, setAfdOptions] = useState<{ value: string; label: string }[]>([]);
-    const fetchData = async (newCursor) => {
+    const fetchData = useCallback(async (newCursor) => {
         try {
             const loginData = cookie.get("token");
             const tokenData = JSON.parse(loginData || "{}");
@@ -304,7 +307,7 @@ const Dashboard = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [apiUrl, cursor, searchInput, sortBy, sortDirection, filters, limitPerPage]);
 
     const handleFilterChange = (selectedOption, filterKey) => {
         setFilters(prevFilters => ({
@@ -403,7 +406,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchData(cursor);
-    }, [cursor, searchInput, sortBy, sortDirection, filters]);
+    }, [cursor, searchInput, sortBy, sortDirection, filters, fetchData, limitPerPage]);
 
     useEffect(() => {
         fetchTahunOptions();
