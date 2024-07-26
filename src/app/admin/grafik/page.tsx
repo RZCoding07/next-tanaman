@@ -19,7 +19,6 @@ import { NumericFormat } from "react-number-format";
 import { isWindowAvailable } from "utils/navigation";
 
 const Dashboard = () => {
-const Dashboard = () => {
 
     // Function to generate random number within a range
     function getRandomNumber(min, max) {
@@ -65,16 +64,7 @@ const Dashboard = () => {
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS B', 'Manajer B'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS C', 'Manajer C'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS D', 'Manajer D'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS A', 'Manajer A'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS B', 'Manajer B'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS C', 'Manajer C'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS D', 'Manajer D'] },
                 // Continue for other data points
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS E', 'Manajer E'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS F', 'Manajer F'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS G', 'Manajer G'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS H', 'Manajer H'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS I', 'Manajer I'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS E', 'Manajer E'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS F', 'Manajer F'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS G', 'Manajer G'] },
@@ -83,29 +73,19 @@ const Dashboard = () => {
                 // Continue for other data points
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS J', 'Manajer J'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS K', 'Manajer K'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS J', 'Manajer J'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS K', 'Manajer K'] },
                 // Continue for other data points
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS M', 'Manajer M'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS N', 'Manajer N'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS M', 'Manajer M'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS N', 'Manajer N'] },
                 // Continue for other data points
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS P', 'Manajer P'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS R', 'Manajer R'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS P', 'Manajer P'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS R', 'Manajer R'] },
                 // Continue for other data points
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS T', 'Manajer T'] },
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS T', 'Manajer T'] },
                 // Continue for other data points
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS V', 'Manajer V'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS V', 'Manajer V'] },
                 // Continue for other data points
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS X', 'Manajer X'] },
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS X', 'Manajer X'] },
                 // Continue for other data points
-                { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS Z', 'Manajer Z'] }
                 { value: [getRandomNumber(1, 4), getRandomNumber(2000, 3000), 'PKS Z', 'Manajer Z'] }
             ];
 
@@ -231,7 +211,6 @@ const Dashboard = () => {
 
     if (isWindowAvailable()) {
         document.title = 'Dashboard';
-        document.title = 'Dashboard';
     }
 
 
@@ -269,13 +248,6 @@ const Dashboard = () => {
         }),
     };
 
-    const [filters, setFilters] = useState({
-        selectedBulan: "",
-        selectedTahun: "",
-        selectedRpc: "",
-        selectedKebun: "",
-        selectedAfd: "",
-    });
     const [filters, setFilters] = useState({
         selectedBulan: "",
         selectedTahun: "",
@@ -353,69 +325,9 @@ const Dashboard = () => {
             fetchKebunOptions(filters.selectedTahun, filters.selectedBulan, selectedOption ? selectedOption.value : "");
         } else if (filterKey === "selectedKebun") {
             fetchAfdOptions(filters.selectedTahun, filters.selectedBulan, filters.selectedRpc, selectedOption ? selectedOption.value : "");
-    const handleFilterChange = (selectedOption, filterKey) => {
-        setFilters(prevFilters => ({
-            ...prevFilters,
-            [filterKey]: selectedOption ? selectedOption.value : "",
-        }));
-        setCursor(null);
-
-        // Automatically fetch dependent options when a filter is selected
-        if (filterKey === "selectedTahun") {
-            fetchBulanOptions(selectedOption ? selectedOption.value : "");
-        } else if (filterKey === "selectedBulan") {
-            fetchRpcOptions(filters.selectedTahun, selectedOption ? selectedOption.value : "");
-        } else if (filterKey === "selectedRpc") {
-            fetchKebunOptions(filters.selectedTahun, filters.selectedBulan, selectedOption ? selectedOption.value : "");
-        } else if (filterKey === "selectedKebun") {
-            fetchAfdOptions(filters.selectedTahun, filters.selectedBulan, filters.selectedRpc, selectedOption ? selectedOption.value : "");
         }
     };
 
-    const fetchTahunOptions = async () => {
-        try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tahun`);
-            const tahunData = response.data.map((item: { tahun: number }) => ({
-                value: item.tahun.toString(),
-                label: item.tahun.toString(),
-            }));
-            setTahunOptions(tahunData);
-        } catch (error) {
-            console.error("Error fetching tahun options:", error);
-        }
-    };
-
-    const fetchBulanOptions = async (tahun) => {
-        const monthNames = [
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-        ];
-
-        try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/bulan/${tahun}`);
-            const data = response.data;
-            const bulanOptions = data.map((item) => ({
-                value: item.bulan,
-                label: monthNames[item.bulan - 1],  // Convert the integer to the month name
-            }));
-            setBulanOptions(bulanOptions);
-        } catch (error) {
-            console.error("Error fetching bulan options:", error);
-        }
-    };
-
-
-    const fetchRpcOptions = async (tahun: string, bulan: string) => {
-        try {
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/rpc/${tahun}/${bulan}`);
-            const data = response.data;
-            const regionalOptions = data.map((item: { rpc: string }) => ({
-                value: item.rpc,
-                label: item.rpc,
-            }));
-            setRpcOptions(regionalOptions);
-        } catch (error) {
-            console.error("Error fetching rpc options:", error);
     const fetchTahunOptions = async () => {
         try {
             const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tahun`);
@@ -507,72 +419,13 @@ const Dashboard = () => {
             {/* table */}
             <div className="container mx-auto">
                 <div className="mt-10 mb-5">
-                <div className="mt-10 mb-5">
                     <div className="relative overflow-x-auto overflow-y-hidden border-gray-200 rounded-lg shadow-lg dark:border-navy-700 border-opacity-50 border-[2px] backdrop-filter backdrop-blur-lg bg-white dark:bg-navy-900 dark:text-white">
                         <div className="p-4 border-b border-gray-200 dark:border-navy-700 flex justify-center">
                             <h1 className="text-lg font-semibold text-navy-800 dark:text-white">GRAFIK MONITORING PICA</h1>
                         </div>
                         <div className="p-4">
                             {/* Content can go here if needed */}
-                        <div className="p-4 border-b border-gray-200 dark:border-navy-700 flex justify-center">
-                            <h1 className="text-lg font-semibold text-navy-800 dark:text-white">GRAFIK MONITORING PICA</h1>
                         </div>
-                        <div className="p-4">
-                            {/* Content can go here if needed */}
-                        </div>
-                    </div>
-
-                    {/* Filter Dropdowns */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 p-4 mt-4">
-                        <div className="mr-4">
-                            <Select
-                                options={tahunOptions}
-                                placeholder="Pilih Tahun"
-                                value={tahunOptions.find(option => option.value === filters.selectedTahun)}
-                                onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedTahun")}
-                                isClearable
-                                styles={customStyles}
-                            />
-                        </div>
-                        <div className="mr-4">
-                            <Select
-                                options={bulanOptions}
-                                placeholder="Pilih Bulan"
-                                value={bulanOptions.find(option => option.value === filters.selectedBulan)}
-                                onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedBulan")}
-                                isClearable
-                                styles={customStyles}
-                            />
-                        </div>
-                        <div className="mr-4">
-                            <Select
-                                options={regionalOptions}
-                                placeholder="Pilih RPC"
-                                value={regionalOptions.find(option => option.value === filters.selectedRpc)}
-                                onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedRpc")}
-                                isClearable
-                                styles={customStyles}
-                            />
-                        </div>
-                        <div className="mr-4">
-                            <Select
-                                options={kebunOptions}
-                                placeholder="Pilih Kebun"
-                                value={kebunOptions.find(option => option.value === filters.selectedKebun)}
-                                onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedKebun")}
-                                isClearable
-                                styles={customStyles}
-                            />
-                        </div>
-                        <div className="mr-4">
-                            <Select
-                                options={afdOptions}
-                                placeholder="Pilih AFD"
-                                value={afdOptions.find(option => option.value === filters.selectedAfd)}
-                                onChange={(selectedOption) => handleFilterChange(selectedOption, "selectedAfd")}
-                                isClearable
-                                styles={customStyles}
-                            />
                     </div>
 
                     {/* Filter Dropdowns */}
@@ -705,7 +558,6 @@ const Dashboard = () => {
                             <div
                                 style={{
                                     bottom: '3%',
-                                    bottom: '3%',
                                     right: '0%',
                                     border: '1px solid green',
                                     padding: '5px',
@@ -726,7 +578,6 @@ const Dashboard = () => {
                             </div>
                             <div
                                 style={{
-                                    bottom: '3%',
                                     bottom: '3%',
                                     left: '0%',
                                     border: '1px solid yellow',
@@ -756,5 +607,4 @@ const Dashboard = () => {
     );
 }
 
-export default Dashboard;
 export default Dashboard;

@@ -19,7 +19,7 @@ const Tables = () => {
       <div className="mt-5 grid h-full grid-cols-1 gap-5 md:grid-cols-2">
         <ColumnsTable tableData={tableDataColumns} />
 
-        <ComplexTable tableData={tableDataComplex} />
+        <ComplexTable tableData={tableDataComplex} namaTable="mantap Gan" />
       </div>
     </div>
   );
