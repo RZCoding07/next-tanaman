@@ -14,25 +14,37 @@ import {
 } from '@tanstack/react-table';
 
 type RowObj = {
-  name: string;
-  status: string;
-  date: string;
-  progress: number;
+  id: number;
+  no_blok: string;
+  w1: string;
+  w2: string;
+  w3: string;
+  w4: string;
+  w5: string;
+  color: string;
+  month: string;
+  year: number;
+  createdAt: string;
+  updatedAt: string;
 };
+
 
 const columnHelper = createColumnHelper<RowObj>();
 
 // const columns = columnsDataCheck;
-export default function ComplexTable(props: { tableData: any }) {
+export default function ComplexTable(props: { tableData: any, namaTable: string }) {
   const { tableData } = props;
-  
+  const { namaTable } = props;
+
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   let defaultData = tableData;
+  let defaultNamaTable = namaTable;
   const columns = [
-    columnHelper.accessor('name', {
-      id: 'name',
+    columnHelper.accessor('id', {
+      id: 'id',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">NAME</p>
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Id</p>
       ),
       cell: (info) => (
         <p className="text-sm font-bold text-navy-700 dark:text-white">
@@ -40,32 +52,12 @@ export default function ComplexTable(props: { tableData: any }) {
         </p>
       ),
     }),
-    columnHelper.accessor('status', {
-      id: 'status',
+    columnHelper.accessor('no_blok', {
+      id: 'no_blok',
       header: () => (
         <p className="text-sm font-bold text-gray-600 dark:text-white">
-          STATUS
+          No Blok
         </p>
-      ),
-      cell: (info) => (
-        <div className="flex items-center">
-          {info.getValue() === 'Approved' ? (
-            <MdCheckCircle className="me-1 text-green-500 dark:text-green-300" />
-          ) : info.getValue() === 'Disable' ? (
-            <MdCancel className="me-1 text-red-500 dark:text-red-300" />
-          ) : info.getValue() === 'Error' ? (
-            <MdOutlineError className="me-1 text-amber-500 dark:text-amber-300" />
-          ) : null}
-          <p className="text-sm font-bold text-navy-700 dark:text-white">
-            {info.getValue()}
-          </p>
-        </div>
-      ),
-    }),
-    columnHelper.accessor('date', {
-      id: 'date',
-      header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">DATE</p>
       ),
       cell: (info) => (
         <p className="text-sm font-bold text-navy-700 dark:text-white">
@@ -73,17 +65,92 @@ export default function ComplexTable(props: { tableData: any }) {
         </p>
       ),
     }),
-    columnHelper.accessor('progress', {
-      id: 'progress',
+    columnHelper.accessor('w1', {
+      id: 'w1',
       header: () => (
-        <p className="text-sm font-bold text-gray-600 dark:text-white">
-          PROGRESS
-        </p>
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Why1</p>
       ),
       cell: (info) => (
-        <div className="flex items-center">
-          <Progress width="w-[108px]" value={info.getValue()} />
-        </div>
+        <p className="text-sm font-bold text-navy-700 dark:text-white">
+          {info.getValue()}
+        </p>
+      ),
+    }),
+    columnHelper.accessor('w2', {
+      id: 'w2',
+      header: () => (
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Why2</p>
+      ),
+      cell: (info) => (
+        <p className="text-sm font-bold text-navy-700 dark:text-white">
+          {info.getValue()}
+        </p>
+      ),
+    }),
+    columnHelper.accessor('w3', {
+      id: 'w3',
+      header: () => (
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Why3</p>
+      ),
+      cell: (info) => (
+        <p className="text-sm font-bold text-navy-700 dark:text-white">
+          {info.getValue()}
+        </p>
+      ),
+    }),
+    columnHelper.accessor('w4', {
+      id: 'w4',
+      header: () => (
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Why4</p>
+      ),
+      cell: (info) => (
+        <p className="text-sm font-bold text-navy-700 dark:text-white">
+          {info.getValue()}
+        </p>
+      ),
+    }),
+    columnHelper.accessor('w5', {
+      id: 'w5',
+      header: () => (
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Why5</p>
+      ),
+      cell: (info) => (
+        <p className="text-sm font-bold text-navy-700 dark:text-white">
+          {info.getValue()}
+        </p>
+      ),
+    }),
+    columnHelper.accessor('color', {
+      id: 'color',
+      header: () => (
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Color</p>
+      ),
+      cell: (info) => (
+        <p className="text-sm font-bold text-navy-700 dark:text-white">
+          {info.getValue()}
+        </p>
+      ),
+    }),
+    columnHelper.accessor('month', {
+      id: 'month',
+      header: () => (
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Month</p>
+      ),
+      cell: (info) => (
+        <p className="text-sm font-bold text-navy-700 dark:text-white">
+          {info.getValue()}
+        </p>
+      ),
+    }),
+    columnHelper.accessor('year', {
+      id: 'year',
+      header: () => (
+        <p className="text-sm font-bold text-gray-600 dark:text-white">Year</p>
+      ),
+      cell: (info) => (
+        <p className="text-sm font-bold text-navy-700 dark:text-white">
+          {info.getValue()}
+        </p>
       ),
     }),
   ]; // eslint-disable-next-line
@@ -103,7 +170,7 @@ export default function ComplexTable(props: { tableData: any }) {
     <Card extra={'w-full h-full px-6 pb-6 sm:overflow-x-auto'}>
       <div className="relative flex items-center justify-between pt-4">
         <div className="text-xl font-bold text-navy-700 dark:text-white">
-          Complex Table
+          {defaultNamaTable}
         </div>
         <CardMenu />
       </div>

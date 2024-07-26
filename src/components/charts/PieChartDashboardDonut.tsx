@@ -47,13 +47,20 @@ const EChartsComponent: React.FC<DataChart> = ({ nameData, downloadJsonData, bui
       title: [
         {
           text: nameData,
+          subtext: 'Total ' + Object.keys(downloadJson).reduce(function (all, key) {
+            return all + downloadJson[key];
+          }, 0),
           left: '50%',
           textAlign: 'center',
+          // to botton
+          // bottom: '5%',
         }
       ],
       legend: {
-        top: '5%',
+        bottom: '5%',
         left: 'center'
+
+
       },
       series: [
         {

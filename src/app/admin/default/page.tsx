@@ -14,6 +14,8 @@ import { isWindowAvailable } from "utils/navigation";
 import PieChartDashboard from 'components/charts/PieChartDashboard';
 import PieChartDashboardDonut from 'components/charts/PieChartDashboardDonut';
 import ComplexTable from "components/admin/data-tables/ComplexTable";
+import TableListPI from "components/admin/data-tables/TablePI";
+import TableListCA from "components/admin/data-tables/TableCA";
 
 
 import cookie from "js-cookie";
@@ -25,6 +27,154 @@ const Dashboard = () => {
 	const [darkmode, setDarkmode] = useState(
 		document.body.classList.contains('dark')
 	);
+
+	// temp data for table 
+	const dataTempTable = {
+		"status_code": 200,
+		"message": "table data displayed successfully",
+		"payload": [
+			{
+				"id": 1,
+				"no_blok": "001",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Kondisi Kebun",
+				"w3": "Anak Kayu Berat",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA1",
+				"color": "Color1",
+				"month": "January",
+				"year": 2024,
+				"createdAt": "2024-01-01T00:00:00Z",
+				"updatedAt": "2024-01-01T00:00:00Z"
+			},
+			{
+				"id": 2,
+				"no_blok": "002",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Kondisi Kebun",
+				"w3": "Semak Lalang",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA2",
+				"color": "Color2",
+				"month": "February",
+				"year": 2024,
+				"createdAt": "2024-02-01T00:00:00Z",
+				"updatedAt": "2024-02-01T00:00:00Z"
+			},
+			{
+				"id": 3,
+				"no_blok": "003",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Kondisi Kebun",
+				"w3": "Pasar Pikul dan Gawangan Semak Gulma (Lunak)",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA3",
+				"color": "Color3",
+				"month": "March",
+				"year": 2024,
+				"createdAt": "2024-03-01T00:00:00Z",
+				"updatedAt": "2024-03-01T00:00:00Z"
+			},
+			{
+				"id": 4,
+				"no_blok": "004",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Infrastruktur",
+				"w3": "Main Road Kondisi Berat",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA4",
+				"color": "Color4",
+				"month": "April",
+				"year": 2024,
+				"createdAt": "2024-04-01T00:00:00Z",
+				"updatedAt": "2024-04-01T00:00:00Z"
+			},
+			{
+				"id": 5,
+				"no_blok": "005",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Infrastruktur",
+				"w3": "Collection Road Kondisi Berat",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA5",
+				"color": "Color5",
+				"month": "May",
+				"year": 2024,
+				"createdAt": "2024-05-01T00:00:00Z",
+				"updatedAt": "2024-05-01T00:00:00Z"
+			},
+			{
+				"id": 6,
+				"no_blok": "006",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Infrastruktur",
+				"w3": "Titi Panen tidak tersedia",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA6",
+				"color": "Color6",
+				"month": "June",
+				"year": 2024,
+				"createdAt": "2024-06-01T00:00:00Z",
+				"updatedAt": "2024-06-01T00:00:00Z"
+			},
+			{
+				"id": 7,
+				"no_blok": "007",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Infrastruktur",
+				"w3": "Akses Sulit pada areal terasan",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA7",
+				"color": "Color7",
+				"month": "July",
+				"year": 2024,
+				"createdAt": "2024-07-01T00:00:00Z",
+				"updatedAt": "2024-07-01T00:00:00Z"
+			},
+			{
+				"id": 8,
+				"no_blok": "008",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Tanaman",
+				"w3": "Defisiensi Unsur Hara",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA8",
+				"color": "Color8",
+				"month": "August",
+				"year": 2024,
+				"createdAt": "2024-08-01T00:00:00Z",
+				"updatedAt": "2024-08-01T00:00:00Z"
+			},
+			{
+				"id": 9,
+				"no_blok": "009",
+				"w1": "RBT Dibawah Potensi",
+				"w2": "Tanaman",
+				"w3": "Serangan Hama UPDKS",
+				"w4": "Value 4",
+				"w5": "Value 5",
+				"ca": "CA9",
+				"color": "Color9",
+				"month": "September",
+				"year": 2024,
+				"createdAt": "2024-09-01T00:00:00Z",
+				"updatedAt": "2024-09-01T00:00:00Z"
+			}
+		]
+	};
+
+
+
+
+
 
 	// Toggle dark mode
 	const handleDarkmode = useCallback(() => {
@@ -229,7 +379,7 @@ const Dashboard = () => {
 
 
 	// table
-	if (isWindowAvailable()) document.title = "User List";
+	if (isWindowAvailable()) document.title = "Dashboard - PICA";
 
 	const [dataAllUser, setDataAllUser] = useState<UserType[]>([]);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -490,42 +640,6 @@ const Dashboard = () => {
 		fetchTahunOptions();
 	}, [fetchTahunOptions]);
 
-	// sample data
-	const sample_data = [
-		{
-			"name": "mantap1",
-			"progress": "mantap1",
-			"quantity": 45,
-			"date": "24/7/2023"
-		},
-		{
-			"name": "mantap2",
-			"progress": "mantap2",
-			"quantity": 67,
-			"date": "9/4/2023"
-		},
-		{
-			"name": "mantap3",
-			"progress": "mantap3",
-			"quantity": 12,
-			"date": "12/5/2023"
-		},
-		{
-			"name": "mantap4",
-			"progress": "mantap4",
-			"quantity": 89,
-			"date": "3/1/2023"
-		},
-		{
-			"name": "mantap5",
-			"progress": "mantap5",
-			"quantity": 53,
-			"date": "25/2/2023"
-		}];
-
-
-
-
 	return (
 		<div className="w-full min-h-screen">
 			<div className="mt-10 mb-5">
@@ -589,46 +703,40 @@ const Dashboard = () => {
 					</div>
 				</div>
 			</div>
-
-			<div className="flex gap-5">
-				<div className="grid grid-cols-1 gap-5 md:grid-cols-1 flex-1">
-					<div className="flex">
+			<div className="flex gap-5 items-start">
+				{/* Pie Charts Section */}
+				<div className="flex-1 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+					<div className="flex justify-center">
 						<PieChartDashboardDonut nameData="Total" downloadJsonData={pieDataMuda.downloadJsonMuda} builderJsonData={pieDataMuda.builderJsonMuda} />
 					</div>
-					<div className="flex">
+					<div className="flex justify-center">
 						<PieChartDashboard nameData="Muda" downloadJsonData={pieDataMuda.downloadJsonMuda} builderJsonData={pieDataMuda.builderJsonMuda} />
 					</div>
-					<div className="flex">
+					<div className="flex justify-center">
 						<PieChartDashboard nameData="Remaja" downloadJsonData={pieDataRemaja.downloadJsonRemaja} builderJsonData={pieDataRemaja.builderJsonRemaja} />
 					</div>
-					<div className="flex">
+					<div className="flex justify-center">
 						<PieChartDashboard nameData="Dewasa" downloadJsonData={pieDataDewasa.downloadJsonDewasa} builderJsonData={pieDataDewasa.builderJsonDewasa} />
 					</div>
-					<div className="flex">
+					<div className="flex justify-center">
 						<PieChartDashboard nameData="Tua" downloadJsonData={pieDataTua.downloadJsonTua} builderJsonData={pieDataTua.builderJsonTua} />
 					</div>
-					<div className="flex">
+					<div className="flex justify-center">
 						<PieChartDashboard nameData="Renta" downloadJsonData={pieDataRenta.downloadJsonRenta} builderJsonData={pieDataRenta.builderJsonRenta} />
 					</div>
 				</div>
-				<div className="grid grid-cols-1 gap-5 md:grid-cols-1 flex-1">
-					<div className="flex">
-						<ComplexTable tableData={sample_data} />
+
+				{/* Tables Section */}
+				<div className="flex-1 grid grid-cols-1 gap-5">
+					<div className="flex justify-center">
+						<TableListPI />
 					</div>
-					<div className="flex">
-						<ComplexTable tableData={sample_data} />
-					</div>
-					<div className="flex">
-						<ComplexTable tableData={sample_data} />
-					</div>
-					<div className="flex">
-						<ComplexTable tableData={sample_data} />
-					</div>
-					<div className="flex">
-						<ComplexTable tableData={sample_data} />
+					<div className="flex justify-center">
+						<TableListCA />
 					</div>
 				</div>
 			</div>
+
 		</div>
 	);
 
